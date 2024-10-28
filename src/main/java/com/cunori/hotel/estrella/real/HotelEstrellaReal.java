@@ -5,6 +5,8 @@
 
 package com.cunori.hotel.estrella.real;
 
+import com.cunori.views.GUI;
+
 /**
  *
  * @author ferna
@@ -12,6 +14,6 @@ package com.cunori.hotel.estrella.real;
 public class HotelEstrellaReal {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        GUI gui = new GUI();
     }
 }
