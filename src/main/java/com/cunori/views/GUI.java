@@ -4,19 +4,26 @@
  */
 package com.cunori.views;
 
+import java.awt.Color;
+
 /**
  *
  * @author ferna
  */
 public class GUI extends javax.swing.JFrame {
 
-    /**
-     * Creates new form GUI
-     */
+    private Color colorEnteredPerfil; 
+    private Color colorExitedPerfil; 
+    
     public GUI() {
         this.setSize(1000, 650);
         this.setLocationRelativeTo(null);
         this.setVisible(true);
+        
+        colorEnteredPerfil = new Color(0,87,95);
+        colorExitedPerfil = new Color(0,109,119);
+        
+        
         initComponents();
     }
 
@@ -30,7 +37,7 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         pMenu = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
+        lbPerfil = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         pBody = new javax.swing.JPanel();
         jButton1 = new javax.swing.JButton();
@@ -43,12 +50,22 @@ public class GUI extends javax.swing.JFrame {
         pMenu.setBackground(new java.awt.Color(0, 109, 119));
         pMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("PERFIL");
-        jLabel1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        pMenu.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 190, 58));
+        lbPerfil.setBackground(new java.awt.Color(0, 109, 119));
+        lbPerfil.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
+        lbPerfil.setForeground(new java.awt.Color(255, 255, 255));
+        lbPerfil.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbPerfil.setText("PERFIL");
+        lbPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbPerfil.setOpaque(true);
+        lbPerfil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbPerfilMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbPerfilMouseExited(evt);
+            }
+        });
+        pMenu.add(lbPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 190, 58));
         pMenu.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 150, 10));
 
         getContentPane().add(pMenu, java.awt.BorderLayout.LINE_START);
@@ -59,6 +76,7 @@ public class GUI extends javax.swing.JFrame {
         jButton1.setText("jButton1");
         pBody.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(379, 296, -1, -1));
 
+        jLabel2.setBackground(new java.awt.Color(69, 123, 157));
         jLabel2.setText("jLabel2");
         pBody.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(292, 186, 37, -1));
 
@@ -66,6 +84,14 @@ public class GUI extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void lbPerfilMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseEntered
+        lbPerfil.setBackground(colorEnteredPerfil);
+    }//GEN-LAST:event_lbPerfilMouseEntered
+
+    private void lbPerfilMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseExited
+        lbPerfil.setBackground(colorExitedPerfil);
+    }//GEN-LAST:event_lbPerfilMouseExited
 
     /**
      * @param args the command line arguments
@@ -104,9 +130,9 @@ public class GUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lbPerfil;
     private javax.swing.JPanel pBody;
     private javax.swing.JPanel pMenu;
     // End of variables declaration//GEN-END:variables
