@@ -12,19 +12,20 @@ import java.awt.Color;
  */
 public class GUI extends javax.swing.JFrame {
 
-    private Color colorEnteredPerfil; 
-    private Color colorExitedPerfil; 
+    private Color colorEnteredMenu; 
+    private Color colorExitedMenu; 
     
     public GUI() {
-        this.setSize(1000, 650);
-        this.setLocationRelativeTo(null);
-        this.setVisible(true);
-        
-        colorEnteredPerfil = new Color(0,87,95);
-        colorExitedPerfil = new Color(0,109,119);
-        
-        
         initComponents();
+        this.setSize(1400, 800);
+        this.setLocationRelativeTo(null);
+        
+        colorEnteredMenu = new Color(0,87,95);
+        colorExitedMenu = new Color(0,109,119);
+        
+        ocultarPaneles();
+        pPerfil.setVisible(true);
+        
     }
 
     /**
@@ -37,27 +38,77 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         pMenu = new javax.swing.JPanel();
+        lbReservaciones = new javax.swing.JLabel();
         lbPerfil = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         pBody = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
+        pPerfil = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
+        txtCantidadProductoServicio = new javax.swing.JTextField();
+        jSeparator2 = new javax.swing.JSeparator();
+        jLabel3 = new javax.swing.JLabel();
+        txtCantidadProductoServicio1 = new javax.swing.JTextField();
+        jSeparator3 = new javax.swing.JSeparator();
+        jLabel4 = new javax.swing.JLabel();
+        txtCantidadProductoServicio2 = new javax.swing.JTextField();
+        jSeparator4 = new javax.swing.JSeparator();
+        jLabel5 = new javax.swing.JLabel();
+        txtCantidadProductoServicio3 = new javax.swing.JTextField();
+        jSeparator5 = new javax.swing.JSeparator();
+        jLabel6 = new javax.swing.JLabel();
+        txtCantidadProductoServicio4 = new javax.swing.JTextField();
+        jSeparator6 = new javax.swing.JSeparator();
+        jLabel7 = new javax.swing.JLabel();
+        jPasswordField1 = new javax.swing.JPasswordField();
+        jSeparator7 = new javax.swing.JSeparator();
+        lbGuardarCambios = new javax.swing.JLabel();
+        jLabel8 = new javax.swing.JLabel();
+        txtCantidadProductoServicio5 = new javax.swing.JTextField();
+        jSeparator8 = new javax.swing.JSeparator();
+        lbCambiarContrasenia = new javax.swing.JLabel();
+        pReservaciones = new javax.swing.JPanel();
+        jPanel2 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new java.awt.Dimension(1000, 700));
-        setPreferredSize(new java.awt.Dimension(500, 500));
+        setMinimumSize(new java.awt.Dimension(1400, 800));
+        setPreferredSize(new java.awt.Dimension(1400, 800));
+        setSize(new java.awt.Dimension(1400, 800));
 
         pMenu.setBackground(new java.awt.Color(0, 109, 119));
         pMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
+        lbReservaciones.setBackground(new java.awt.Color(0, 109, 119));
+        lbReservaciones.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        lbReservaciones.setForeground(new java.awt.Color(255, 255, 255));
+        lbReservaciones.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbReservaciones.setText("Reservaciones");
+        lbReservaciones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbReservaciones.setOpaque(true);
+        lbReservaciones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbReservacionesMouseClicked(evt);
+            }
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbReservacionesMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbReservacionesMouseExited(evt);
+            }
+        });
+        pMenu.add(lbReservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 200, 58));
+
         lbPerfil.setBackground(new java.awt.Color(0, 109, 119));
-        lbPerfil.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
+        lbPerfil.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
         lbPerfil.setForeground(new java.awt.Color(255, 255, 255));
         lbPerfil.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbPerfil.setText("PERFIL");
+        lbPerfil.setText("Perfil");
         lbPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbPerfil.setOpaque(true);
         lbPerfil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lbPerfilMouseClicked(evt);
+            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbPerfilMouseEntered(evt);
             }
@@ -65,33 +116,219 @@ public class GUI extends javax.swing.JFrame {
                 lbPerfilMouseExited(evt);
             }
         });
-        pMenu.add(lbPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 180, 190, 58));
+        pMenu.add(lbPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 200, 58));
         pMenu.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 150, 10));
 
         getContentPane().add(pMenu, java.awt.BorderLayout.LINE_START);
 
-        pBody.setBackground(new java.awt.Color(237, 246, 249));
+        pBody.setBackground(new java.awt.Color(255, 255, 255));
+        pBody.setMinimumSize(new java.awt.Dimension(1330, 800));
+        pBody.setPreferredSize(new java.awt.Dimension(1330, 800));
         pBody.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jButton1.setText("jButton1");
-        pBody.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(379, 296, -1, -1));
+        pPerfil.setBackground(new java.awt.Color(255, 255, 255));
+        pPerfil.setMinimumSize(new java.awt.Dimension(800, 800));
+        pPerfil.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel2.setBackground(new java.awt.Color(69, 123, 157));
-        jLabel2.setText("jLabel2");
-        pBody.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(292, 186, 37, -1));
+        jPanel1.setBackground(new java.awt.Color(237, 246, 249));
+        jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel2.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel2.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel2.setText("Nit *");
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 40, 160, -1));
+
+        txtCantidadProductoServicio.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio.setForeground(java.awt.Color.gray);
+        txtCantidadProductoServicio.setText("123456");
+        txtCantidadProductoServicio.setBorder(null);
+        txtCantidadProductoServicio.setEnabled(false);
+        jPanel1.add(txtCantidadProductoServicio, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 300, -1));
+
+        jSeparator2.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 100, 300, 10));
+
+        jLabel3.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel3.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel3.setText("Nombre *");
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 120, 160, -1));
+
+        txtCantidadProductoServicio1.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio1.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio1.setText("Juan");
+        txtCantidadProductoServicio1.setBorder(null);
+        jPanel1.add(txtCantidadProductoServicio1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, 300, -1));
+
+        jSeparator3.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 180, 300, 10));
+
+        jLabel4.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel4.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel4.setText("Apellido(s) *");
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 200, 160, -1));
+
+        txtCantidadProductoServicio2.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio2.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio2.setText("López");
+        txtCantidadProductoServicio2.setBorder(null);
+        jPanel1.add(txtCantidadProductoServicio2, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, 300, -1));
+
+        jSeparator4.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 260, 300, 10));
+
+        jLabel5.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel5.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel5.setText("Teléfono *");
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 280, 160, -1));
+
+        txtCantidadProductoServicio3.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio3.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio3.setText("123456");
+        txtCantidadProductoServicio3.setBorder(null);
+        jPanel1.add(txtCantidadProductoServicio3, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 310, 300, -1));
+
+        jSeparator5.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 340, 300, 10));
+
+        jLabel6.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel6.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel6.setText("Contraseña *");
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 120, 160, -1));
+
+        txtCantidadProductoServicio4.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio4.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio4.setText("juanlop@gmail.com");
+        txtCantidadProductoServicio4.setBorder(null);
+        jPanel1.add(txtCantidadProductoServicio4, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 70, 300, -1));
+
+        jSeparator6.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 180, 300, 10));
+
+        jLabel7.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel7.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel7.setText("Correo *");
+        jPanel1.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 40, 160, -1));
+
+        jPasswordField1.setBackground(new java.awt.Color(237, 246, 249));
+        jPasswordField1.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jPasswordField1.setText("******************");
+        jPasswordField1.setBorder(null);
+        jPasswordField1.setEnabled(false);
+        jPanel1.add(jPasswordField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 150, 300, -1));
+
+        jSeparator7.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 100, 300, 10));
+
+        lbGuardarCambios.setBackground(new java.awt.Color(0, 109, 119));
+        lbGuardarCambios.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        lbGuardarCambios.setForeground(new java.awt.Color(255, 255, 255));
+        lbGuardarCambios.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbGuardarCambios.setText("Guardar Cambios");
+        lbGuardarCambios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbGuardarCambios.setOpaque(true);
+        lbGuardarCambios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbGuardarCambiosMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbGuardarCambiosMouseExited(evt);
+            }
+        });
+        jPanel1.add(lbGuardarCambios, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 330, 190, 30));
+
+        jLabel8.setBackground(new java.awt.Color(0, 87, 95));
+        jLabel8.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        jLabel8.setText("Rol *");
+        jPanel1.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 210, 160, -1));
+
+        txtCantidadProductoServicio5.setBackground(new java.awt.Color(237, 246, 249));
+        txtCantidadProductoServicio5.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtCantidadProductoServicio5.setText("Recepcionista");
+        txtCantidadProductoServicio5.setBorder(null);
+        txtCantidadProductoServicio5.setEnabled(false);
+        jPanel1.add(txtCantidadProductoServicio5, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 240, 300, -1));
+
+        jSeparator8.setForeground(new java.awt.Color(0, 0, 0));
+        jPanel1.add(jSeparator8, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 270, 300, 10));
+
+        lbCambiarContrasenia.setBackground(new java.awt.Color(0, 109, 119));
+        lbCambiarContrasenia.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        lbCambiarContrasenia.setForeground(new java.awt.Color(255, 255, 255));
+        lbCambiarContrasenia.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbCambiarContrasenia.setText("Cambiar \nContraseña");
+        lbCambiarContrasenia.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbCambiarContrasenia.setOpaque(true);
+        lbCambiarContrasenia.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbCambiarContraseniaMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbCambiarContraseniaMouseExited(evt);
+            }
+        });
+        jPanel1.add(lbCambiarContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 150, 190, 30));
+
+        pPerfil.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 80, 950, 380));
+
+        pBody.add(pPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 650));
+
+        pReservaciones.setBackground(new java.awt.Color(255, 255, 255));
+        pReservaciones.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+        pReservaciones.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 90, 550, 210));
+
+        pBody.add(pReservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1200, 650));
 
         getContentPane().add(pBody, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void ocultarPaneles(){
+        pPerfil.setVisible(false);
+        pReservaciones.setVisible(false);
+    }
+    
+    
     private void lbPerfilMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseEntered
-        lbPerfil.setBackground(colorEnteredPerfil);
+        lbPerfil.setBackground(colorEnteredMenu);
     }//GEN-LAST:event_lbPerfilMouseEntered
 
     private void lbPerfilMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseExited
-        lbPerfil.setBackground(colorExitedPerfil);
+        lbPerfil.setBackground(colorExitedMenu);
     }//GEN-LAST:event_lbPerfilMouseExited
+
+    private void lbPerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseClicked
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lbPerfilMouseClicked
+
+    private void lbReservacionesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbReservacionesMouseClicked
+        
+    }//GEN-LAST:event_lbReservacionesMouseClicked
+
+    private void lbReservacionesMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbReservacionesMouseEntered
+        lbReservaciones.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbReservacionesMouseEntered
+
+    private void lbReservacionesMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbReservacionesMouseExited
+        lbReservaciones.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbReservacionesMouseExited
+
+    private void lbGuardarCambiosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambiosMouseEntered
+        lbGuardarCambios.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbGuardarCambiosMouseEntered
+
+    private void lbGuardarCambiosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambiosMouseExited
+        lbGuardarCambios.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbGuardarCambiosMouseExited
+
+    private void lbCambiarContraseniaMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCambiarContraseniaMouseEntered
+       lbCambiarContrasenia.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbCambiarContraseniaMouseEntered
+
+    private void lbCambiarContraseniaMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbCambiarContraseniaMouseExited
+        lbCambiarContrasenia.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbCambiarContraseniaMouseExited
 
     /**
      * @param args the command line arguments
@@ -129,11 +366,37 @@ public class GUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JSeparator jSeparator2;
+    private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator5;
+    private javax.swing.JSeparator jSeparator6;
+    private javax.swing.JSeparator jSeparator7;
+    private javax.swing.JSeparator jSeparator8;
+    private javax.swing.JLabel lbCambiarContrasenia;
+    private javax.swing.JLabel lbGuardarCambios;
     private javax.swing.JLabel lbPerfil;
+    private javax.swing.JLabel lbReservaciones;
     private javax.swing.JPanel pBody;
     private javax.swing.JPanel pMenu;
+    private javax.swing.JPanel pPerfil;
+    private javax.swing.JPanel pReservaciones;
+    private javax.swing.JTextField txtCantidadProductoServicio;
+    private javax.swing.JTextField txtCantidadProductoServicio1;
+    private javax.swing.JTextField txtCantidadProductoServicio2;
+    private javax.swing.JTextField txtCantidadProductoServicio3;
+    private javax.swing.JTextField txtCantidadProductoServicio4;
+    private javax.swing.JTextField txtCantidadProductoServicio5;
     // End of variables declaration//GEN-END:variables
 }
