@@ -4,20 +4,16 @@
  */
 package com.cunori.controllers;
 
-import com.cunori.controllers.exceptions.IllegalOrphanException;
 import com.cunori.controllers.exceptions.NonexistentEntityException;
+import com.cunori.models.TipoHabitacion;
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import com.cunori.models.Habitacion;
-import com.cunori.models.TipoHabitacion;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 
 /**
  *
@@ -35,29 +31,11 @@ public class TipoHabitacionJpaController implements Serializable {
     }
 
     public void create(TipoHabitacion tipoHabitacion) {
-        if (tipoHabitacion.getHabitacionCollection() == null) {
-            tipoHabitacion.setHabitacionCollection(new ArrayList<Habitacion>());
-        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Habitacion> attachedHabitacionCollection = new ArrayList<Habitacion>();
-            for (Habitacion habitacionCollectionHabitacionToAttach : tipoHabitacion.getHabitacionCollection()) {
-                habitacionCollectionHabitacionToAttach = em.getReference(habitacionCollectionHabitacionToAttach.getClass(), habitacionCollectionHabitacionToAttach.getNumeroHabitacion());
-                attachedHabitacionCollection.add(habitacionCollectionHabitacionToAttach);
-            }
-            tipoHabitacion.setHabitacionCollection(attachedHabitacionCollection);
             em.persist(tipoHabitacion);
-            for (Habitacion habitacionCollectionHabitacion : tipoHabitacion.getHabitacionCollection()) {
-                TipoHabitacion oldIdTipoHabitacionOfHabitacionCollectionHabitacion = habitacionCollectionHabitacion.getIdTipoHabitacion();
-                habitacionCollectionHabitacion.setIdTipoHabitacion(tipoHabitacion);
-                habitacionCollectionHabitacion = em.merge(habitacionCollectionHabitacion);
-                if (oldIdTipoHabitacionOfHabitacionCollectionHabitacion != null) {
-                    oldIdTipoHabitacionOfHabitacionCollectionHabitacion.getHabitacionCollection().remove(habitacionCollectionHabitacion);
-                    oldIdTipoHabitacionOfHabitacionCollectionHabitacion = em.merge(oldIdTipoHabitacionOfHabitacionCollectionHabitacion);
-                }
-            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -66,45 +44,12 @@ public class TipoHabitacionJpaController implements Serializable {
         }
     }
 
-    public void edit(TipoHabitacion tipoHabitacion) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(TipoHabitacion tipoHabitacion) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            TipoHabitacion persistentTipoHabitacion = em.find(TipoHabitacion.class, tipoHabitacion.getIdTipoHabitacion());
-            Collection<Habitacion> habitacionCollectionOld = persistentTipoHabitacion.getHabitacionCollection();
-            Collection<Habitacion> habitacionCollectionNew = tipoHabitacion.getHabitacionCollection();
-            List<String> illegalOrphanMessages = null;
-            for (Habitacion habitacionCollectionOldHabitacion : habitacionCollectionOld) {
-                if (!habitacionCollectionNew.contains(habitacionCollectionOldHabitacion)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Habitacion " + habitacionCollectionOldHabitacion + " since its idTipoHabitacion field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            Collection<Habitacion> attachedHabitacionCollectionNew = new ArrayList<Habitacion>();
-            for (Habitacion habitacionCollectionNewHabitacionToAttach : habitacionCollectionNew) {
-                habitacionCollectionNewHabitacionToAttach = em.getReference(habitacionCollectionNewHabitacionToAttach.getClass(), habitacionCollectionNewHabitacionToAttach.getNumeroHabitacion());
-                attachedHabitacionCollectionNew.add(habitacionCollectionNewHabitacionToAttach);
-            }
-            habitacionCollectionNew = attachedHabitacionCollectionNew;
-            tipoHabitacion.setHabitacionCollection(habitacionCollectionNew);
             tipoHabitacion = em.merge(tipoHabitacion);
-            for (Habitacion habitacionCollectionNewHabitacion : habitacionCollectionNew) {
-                if (!habitacionCollectionOld.contains(habitacionCollectionNewHabitacion)) {
-                    TipoHabitacion oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion = habitacionCollectionNewHabitacion.getIdTipoHabitacion();
-                    habitacionCollectionNewHabitacion.setIdTipoHabitacion(tipoHabitacion);
-                    habitacionCollectionNewHabitacion = em.merge(habitacionCollectionNewHabitacion);
-                    if (oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion != null && !oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion.equals(tipoHabitacion)) {
-                        oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion.getHabitacionCollection().remove(habitacionCollectionNewHabitacion);
-                        oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion = em.merge(oldIdTipoHabitacionOfHabitacionCollectionNewHabitacion);
-                    }
-                }
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -122,7 +67,7 @@ public class TipoHabitacionJpaController implements Serializable {
         }
     }
 
-    public void destroy(Integer id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(Integer id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -133,17 +78,6 @@ public class TipoHabitacionJpaController implements Serializable {
                 tipoHabitacion.getIdTipoHabitacion();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The tipoHabitacion with id " + id + " no longer exists.", enfe);
-            }
-            List<String> illegalOrphanMessages = null;
-            Collection<Habitacion> habitacionCollectionOrphanCheck = tipoHabitacion.getHabitacionCollection();
-            for (Habitacion habitacionCollectionOrphanCheckHabitacion : habitacionCollectionOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This TipoHabitacion (" + tipoHabitacion + ") cannot be destroyed since the Habitacion " + habitacionCollectionOrphanCheckHabitacion + " in its habitacionCollection field has a non-nullable idTipoHabitacion field.");
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(tipoHabitacion);
             em.getTransaction().commit();

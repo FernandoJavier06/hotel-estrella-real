@@ -77,6 +77,18 @@ public class Reservacion implements Serializable {
         this.precioFinal = precioFinal;
     }
 
+    public Reservacion(Integer idReservacion, Date checkIn, Date checkOut, Short camasExtras, BigDecimal precioFinal, Factura idFactura, Habitacion numeroHabitacion) {
+        this.idReservacion = idReservacion;
+        this.checkIn = checkIn;
+        this.checkOut = checkOut;
+        this.camasExtras = camasExtras;
+        this.precioFinal = precioFinal;
+        this.idFactura = idFactura;
+        this.numeroHabitacion = numeroHabitacion;
+    }
+
+    
+    
     public Integer getIdReservacion() {
         return idReservacion;
     }

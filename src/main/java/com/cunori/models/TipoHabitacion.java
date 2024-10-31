@@ -6,9 +6,7 @@ package com.cunori.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,7 +14,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -28,6 +25,7 @@ import javax.persistence.Table;
 @NamedQueries({
     @NamedQuery(name = "TipoHabitacion.findAll", query = "SELECT t FROM TipoHabitacion t"),
     @NamedQuery(name = "TipoHabitacion.findByIdTipoHabitacion", query = "SELECT t FROM TipoHabitacion t WHERE t.idTipoHabitacion = :idTipoHabitacion"),
+    @NamedQuery(name = "TipoHabitacion.findByNombre", query = "SELECT t FROM TipoHabitacion t WHERE t.nombre = :nombre"),
     @NamedQuery(name = "TipoHabitacion.findByPrecio", query = "SELECT t FROM TipoHabitacion t WHERE t.precio = :precio"),
     @NamedQuery(name = "TipoHabitacion.findByDescripcion", query = "SELECT t FROM TipoHabitacion t WHERE t.descripcion = :descripcion")})
 public class TipoHabitacion implements Serializable {
@@ -38,14 +36,15 @@ public class TipoHabitacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID_TIPO_HABITACION")
     private Integer idTipoHabitacion;
+    @Basic(optional = false)
+    @Column(name = "NOMBRE")
+    private String nombre;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(name = "PRECIO")
     private BigDecimal precio;
     @Column(name = "DESCRIPCION")
     private String descripcion;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTipoHabitacion")
-    private Collection<Habitacion> habitacionCollection;
 
     public TipoHabitacion() {
     }
@@ -54,8 +53,9 @@ public class TipoHabitacion implements Serializable {
         this.idTipoHabitacion = idTipoHabitacion;
     }
 
-    public TipoHabitacion(Integer idTipoHabitacion, BigDecimal precio) {
+    public TipoHabitacion(Integer idTipoHabitacion, String nombre, BigDecimal precio) {
         this.idTipoHabitacion = idTipoHabitacion;
+        this.nombre = nombre;
         this.precio = precio;
     }
 
@@ -65,6 +65,14 @@ public class TipoHabitacion implements Serializable {
 
     public void setIdTipoHabitacion(Integer idTipoHabitacion) {
         this.idTipoHabitacion = idTipoHabitacion;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 
     public BigDecimal getPrecio() {
@@ -81,14 +89,6 @@ public class TipoHabitacion implements Serializable {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
-    }
-
-    public Collection<Habitacion> getHabitacionCollection() {
-        return habitacionCollection;
-    }
-
-    public void setHabitacionCollection(Collection<Habitacion> habitacionCollection) {
-        this.habitacionCollection = habitacionCollection;
     }
 
     @Override
@@ -113,7 +113,7 @@ public class TipoHabitacion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cunori.models.TipoHabitacion[ idTipoHabitacion=" + idTipoHabitacion + " ]";
+        return this.nombre + " - " + this.precio.toString();
     }
     
 }
