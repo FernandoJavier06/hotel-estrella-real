@@ -5,23 +5,26 @@
 package com.cunori.views;
 
 import java.awt.Color;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  *
  * @author ferna
  */
-public class pPerfil extends javax.swing.JPanel {
+public class PanelPerfil extends javax.swing.JPanel {
 
     private Color colorEnteredMenu; 
     private Color colorExitedMenu; 
     
-    public pPerfil() {
+    public PanelPerfil() {
         initComponents();
         
         colorEnteredMenu = new Color(0,87,95);
         colorExitedMenu = new Color(0,109,119);
-        
-        this.setVisible(true);
     }
 
     
@@ -172,6 +175,9 @@ public class pPerfil extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 lbGuardarCambiosMouseExited(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbGuardarCambiosMousePressed(evt);
+            }
         });
         pDataPerfil.add(lbGuardarCambios, new org.netbeans.lib.awtextra.AbsoluteConstraints(740, 330, 190, 30));
 
@@ -226,7 +232,93 @@ public class pPerfil extends javax.swing.JPanel {
         lbCambiarContrasenia.setBackground(colorExitedMenu);
     }//GEN-LAST:event_lbCambiarContraseniaMouseExited
 
+    private void lbGuardarCambiosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambiosMousePressed
+        JOptionPane.showMessageDialog(null, "Hola", "Saludo", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_lbGuardarCambiosMousePressed
 
+    public JLabel getLbCambiarContrasenia() {
+        return lbCambiarContrasenia;
+    }
+
+    public void setLbCambiarContrasenia(JLabel lbCambiarContrasenia) {
+        this.lbCambiarContrasenia = lbCambiarContrasenia;
+    }
+
+    public JLabel getLbGuardarCambios() {
+        return lbGuardarCambios;
+    }
+
+    public void setLbGuardarCambios(JLabel lbGuardarCambios) {
+        this.lbGuardarCambios = lbGuardarCambios;
+    }
+
+    public JPanel getpDataPerfil() {
+        return pDataPerfil;
+    }
+
+    public void setpDataPerfil(JPanel pDataPerfil) {
+        this.pDataPerfil = pDataPerfil;
+    }
+
+    public JTextField getTxtApellidos() {
+        return txtApellidos;
+    }
+
+    public void setTxtApellidos(JTextField txtApellidos) {
+        this.txtApellidos = txtApellidos;
+    }
+
+    public JPasswordField getTxtContrasenia() {
+        return txtContrasenia;
+    }
+
+    public void setTxtContrasenia(JPasswordField txtContrasenia) {
+        this.txtContrasenia = txtContrasenia;
+    }
+
+    public JTextField getTxtCorreo() {
+        return txtCorreo;
+    }
+
+    public void setTxtCorreo(JTextField txtCorreo) {
+        this.txtCorreo = txtCorreo;
+    }
+
+    public JTextField getTxtNitUsuario() {
+        return txtNitUsuario;
+    }
+
+    public void setTxtNitUsuario(JTextField txtNitUsuario) {
+        this.txtNitUsuario = txtNitUsuario;
+    }
+
+    public JTextField getTxtNombre() {
+        return txtNombre;
+    }
+
+    public void setTxtNombre(JTextField txtNombre) {
+        this.txtNombre = txtNombre;
+    }
+
+    public JTextField getTxtRol() {
+        return txtRol;
+    }
+
+    public void setTxtRol(JTextField txtRol) {
+        this.txtRol = txtRol;
+    }
+
+    public JTextField getTxtTelefono() {
+        return txtTelefono;
+    }
+
+    public void setTxtTelefono(JTextField txtTelefono) {
+        this.txtTelefono = txtTelefono;
+    }
+
+
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel22;
