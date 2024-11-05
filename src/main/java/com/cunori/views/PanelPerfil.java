@@ -4,6 +4,7 @@
  */
 package com.cunori.views;
 
+import com.cunori.models.Usuario;
 import java.awt.Color;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -16,7 +17,8 @@ import javax.swing.JTextField;
  * @author ferna
  */
 public class PanelPerfil extends javax.swing.JPanel {
-
+    
+    private Usuario usuario;
     private Color colorEnteredMenu; 
     private Color colorExitedMenu; 
     
@@ -25,6 +27,8 @@ public class PanelPerfil extends javax.swing.JPanel {
         
         colorEnteredMenu = new Color(0,87,95);
         colorExitedMenu = new Color(0,109,119);
+        
+        usuario = new Usuario();
     }
 
     
@@ -82,8 +86,8 @@ public class PanelPerfil extends javax.swing.JPanel {
         txtNitUsuario.setBackground(new java.awt.Color(237, 246, 249));
         txtNitUsuario.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
         txtNitUsuario.setForeground(java.awt.Color.gray);
-        txtNitUsuario.setText("123456");
         txtNitUsuario.setBorder(null);
+        txtNitUsuario.setDisabledTextColor(java.awt.Color.gray);
         txtNitUsuario.setEnabled(false);
         pDataPerfil.add(txtNitUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 70, 300, -1));
 
@@ -97,7 +101,6 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtNombre.setBackground(new java.awt.Color(237, 246, 249));
         txtNombre.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtNombre.setText("Juan");
         txtNombre.setBorder(null);
         pDataPerfil.add(txtNombre, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 150, 300, -1));
 
@@ -111,7 +114,6 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtApellidos.setBackground(new java.awt.Color(237, 246, 249));
         txtApellidos.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtApellidos.setText("López");
         txtApellidos.setBorder(null);
         pDataPerfil.add(txtApellidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, 300, -1));
 
@@ -125,7 +127,6 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtTelefono.setBackground(new java.awt.Color(237, 246, 249));
         txtTelefono.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtTelefono.setText("123456");
         txtTelefono.setBorder(null);
         pDataPerfil.add(txtTelefono, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 310, 300, -1));
 
@@ -139,7 +140,6 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtCorreo.setBackground(new java.awt.Color(237, 246, 249));
         txtCorreo.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtCorreo.setText("juanlop@gmail.com");
         txtCorreo.setBorder(null);
         pDataPerfil.add(txtCorreo, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 70, 300, -1));
 
@@ -153,8 +153,8 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtContrasenia.setBackground(new java.awt.Color(237, 246, 249));
         txtContrasenia.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtContrasenia.setText("******************");
         txtContrasenia.setBorder(null);
+        txtContrasenia.setDisabledTextColor(java.awt.Color.gray);
         txtContrasenia.setEnabled(false);
         pDataPerfil.add(txtContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 150, 300, -1));
 
@@ -188,8 +188,8 @@ public class PanelPerfil extends javax.swing.JPanel {
 
         txtRol.setBackground(new java.awt.Color(237, 246, 249));
         txtRol.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtRol.setText("Recepcionista");
         txtRol.setBorder(null);
+        txtRol.setDisabledTextColor(java.awt.Color.gray);
         txtRol.setEnabled(false);
         pDataPerfil.add(txtRol, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 240, 300, -1));
 
@@ -236,6 +236,26 @@ public class PanelPerfil extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(null, "Hola", "Saludo", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_lbGuardarCambiosMousePressed
 
+    public void datosPerfil(){
+        txtNitUsuario.setText(usuario.getNitUsuario());
+        txtNombre.setText(usuario.getNombre());
+        txtApellidos.setText(usuario.getApellidos());
+        txtTelefono.setText(usuario.getTelefono());
+        txtCorreo.setText(usuario.getCorreo());
+        txtContrasenia.setText("claveprueba");
+        txtRol.setText(usuario.getRol());
+    }
+    
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    
+    
     public JLabel getLbCambiarContrasenia() {
         return lbCambiarContrasenia;
     }

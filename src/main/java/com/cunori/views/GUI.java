@@ -6,6 +6,7 @@ package com.cunori.views;
 
 import com.cunori.controllers.TipoHabitacionJpaController;
 import com.cunori.models.TipoHabitacion;
+import com.cunori.models.Usuario;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.List;
@@ -19,12 +20,16 @@ import javax.swing.JScrollPane;
  *
  * @author ferna
  */
-public class GUI extends javax.swing.JFrame {
+public class Gui extends javax.swing.JFrame {
 
+    private GuiLogin guiLogin;
+    
     private Color colorEnteredMenu; 
     private Color colorExitedMenu;
     
     private EntityManagerFactory emf;
+    
+    private Usuario usuario;
     
     TipoHabitacionJpaController tipoHabitacionEntityManager;
     private List<TipoHabitacion> tiposHabitacion;
@@ -32,7 +37,7 @@ public class GUI extends javax.swing.JFrame {
     private PanelPerfil panelPerfil;
     private PanelReservaciones panelReservaciones;
     
-    public GUI() {
+    public Gui() {
         initComponents();
         this.setSize(1500, 800);
         this.setLocationRelativeTo(null);
@@ -72,11 +77,21 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         pMenu = new javax.swing.JPanel();
+        lbUsuarios = new javax.swing.JLabel();
         lbHabitaciones = new javax.swing.JLabel();
         lbReservaciones = new javax.swing.JLabel();
         lbPerfil = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        jLabel1 = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
         pBody = new javax.swing.JPanel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu2 = new javax.swing.JMenu();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
+        jMenu3 = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1500, 800));
@@ -85,6 +100,26 @@ public class GUI extends javax.swing.JFrame {
 
         pMenu.setBackground(new java.awt.Color(0, 109, 119));
         pMenu.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        lbUsuarios.setBackground(new java.awt.Color(0, 109, 119));
+        lbUsuarios.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        lbUsuarios.setForeground(new java.awt.Color(255, 255, 255));
+        lbUsuarios.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbUsuarios.setText("Usuarios");
+        lbUsuarios.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbUsuarios.setOpaque(true);
+        lbUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbUsuariosMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbUsuariosMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbUsuariosMousePressed(evt);
+            }
+        });
+        pMenu.add(lbUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 430, 200, 58));
 
         lbHabitaciones.setBackground(new java.awt.Color(0, 109, 119));
         lbHabitaciones.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -145,7 +180,19 @@ public class GUI extends javax.swing.JFrame {
             }
         });
         pMenu.add(lbPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 190, 200, 58));
-        pMenu.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 150, 10));
+        pMenu.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 160, 180, 10));
+
+        jLabel1.setFont(new java.awt.Font("Roboto Black", 2, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel1.setText("Real");
+        pMenu.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 90, 200, 30));
+
+        jLabel2.setFont(new java.awt.Font("Roboto Black", 2, 24)); // NOI18N
+        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel2.setText("Hotel Estrella");
+        pMenu.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 200, 40));
 
         getContentPane().add(pMenu, java.awt.BorderLayout.LINE_START);
 
@@ -154,6 +201,36 @@ public class GUI extends javax.swing.JFrame {
         pBody.setPreferredSize(new java.awt.Dimension(1330, 800));
         pBody.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         getContentPane().add(pBody, java.awt.BorderLayout.CENTER);
+
+        jMenuBar1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jMenuBar1.setOpaque(true);
+
+        jMenu2.setText("Administrar");
+        jMenu2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenu2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jMenuBar1.add(jMenu2);
+
+        jMenu1.setText("Reportes");
+        jMenu1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jMenu1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+
+        jMenuItem1.setText("jMenuItem1");
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("jMenuItem2");
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu3.setText("Cuenta");
+        jMenu3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+
+        jMenuItem3.setText("Cerrar sesión");
+        jMenu3.add(jMenuItem3);
+
+        jMenuBar1.add(jMenu3);
+
+        setJMenuBar(jMenuBar1);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -166,8 +243,35 @@ public class GUI extends javax.swing.JFrame {
     private void initPanelPerfil(){
         
     }
+
+    public GuiLogin getGuiLogin() {
+        return guiLogin;
+    }
+
+    public void setGuiLogin(GuiLogin guiLogin) {
+        this.guiLogin = guiLogin;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
     
     
+    public void tipoRol(){
+        if (usuario.getRol().equalsIgnoreCase("Administrador")) {
+            lbUsuarios.setVisible(true);
+        }else
+            lbUsuarios.setVisible(false);
+    }
+    
+    public void mandarDatosPerfil(){
+        panelPerfil.setUsuario(usuario);
+        panelPerfil.datosPerfil();
+    }
     
     private void lbPerfilMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseEntered
         lbPerfil.setBackground(colorEnteredMenu);
@@ -207,6 +311,18 @@ public class GUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_lbHabitacionesMousePressed
 
+    private void lbUsuariosMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUsuariosMouseEntered
+        lbUsuarios.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbUsuariosMouseEntered
+
+    private void lbUsuariosMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUsuariosMouseExited
+        lbUsuarios.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbUsuariosMouseExited
+
+    private void lbUsuariosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbUsuariosMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lbUsuariosMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -224,29 +340,40 @@ public class GUI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Gui.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new GUI().setVisible(true);
+                new Gui().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu jMenu3;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JLabel lbHabitaciones;
     private javax.swing.JLabel lbPerfil;
     private javax.swing.JLabel lbReservaciones;
+    private javax.swing.JLabel lbUsuarios;
     private javax.swing.JPanel pBody;
     private javax.swing.JPanel pMenu;
     // End of variables declaration//GEN-END:variables

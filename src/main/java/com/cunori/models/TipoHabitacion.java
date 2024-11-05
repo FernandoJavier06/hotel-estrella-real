@@ -6,7 +6,9 @@ package com.cunori.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -45,6 +48,8 @@ public class TipoHabitacion implements Serializable {
     private BigDecimal precio;
     @Column(name = "DESCRIPCION")
     private String descripcion;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idTipoHabitacion")
+    private Collection<Habitacion> habitacionCollection;
 
     public TipoHabitacion() {
     }
@@ -91,6 +96,14 @@ public class TipoHabitacion implements Serializable {
         this.descripcion = descripcion;
     }
 
+    public Collection<Habitacion> getHabitacionCollection() {
+        return habitacionCollection;
+    }
+
+    public void setHabitacionCollection(Collection<Habitacion> habitacionCollection) {
+        this.habitacionCollection = habitacionCollection;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -113,7 +126,7 @@ public class TipoHabitacion implements Serializable {
 
     @Override
     public String toString() {
-        return this.nombre + " - " + this.precio.toString();
+        return this.nombre + " | Q" + precio;
     }
     
 }

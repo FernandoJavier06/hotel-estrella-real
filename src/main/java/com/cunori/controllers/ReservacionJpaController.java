@@ -13,6 +13,8 @@ import javax.persistence.criteria.Root;
 import com.cunori.models.Factura;
 import com.cunori.models.Habitacion;
 import com.cunori.models.Reservacion;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -42,19 +44,10 @@ public class ReservacionJpaController implements Serializable {
                 idFactura = em.getReference(idFactura.getClass(), idFactura.getIdFactura());
                 reservacion.setIdFactura(idFactura);
             }
-            Habitacion numeroHabitacion = reservacion.getNumeroHabitacion();
-            if (numeroHabitacion != null) {
-                numeroHabitacion = em.getReference(numeroHabitacion.getClass(), numeroHabitacion.getNumeroHabitacion());
-                reservacion.setNumeroHabitacion(numeroHabitacion);
-            }
             em.persist(reservacion);
             if (idFactura != null) {
                 idFactura.getReservacionCollection().add(reservacion);
                 idFactura = em.merge(idFactura);
-            }
-            if (numeroHabitacion != null) {
-                numeroHabitacion.getReservacionCollection().add(reservacion);
-                numeroHabitacion = em.merge(numeroHabitacion);
             }
             em.getTransaction().commit();
         } finally {
@@ -72,15 +65,9 @@ public class ReservacionJpaController implements Serializable {
             Reservacion persistentReservacion = em.find(Reservacion.class, reservacion.getIdReservacion());
             Factura idFacturaOld = persistentReservacion.getIdFactura();
             Factura idFacturaNew = reservacion.getIdFactura();
-            Habitacion numeroHabitacionOld = persistentReservacion.getNumeroHabitacion();
-            Habitacion numeroHabitacionNew = reservacion.getNumeroHabitacion();
             if (idFacturaNew != null) {
                 idFacturaNew = em.getReference(idFacturaNew.getClass(), idFacturaNew.getIdFactura());
                 reservacion.setIdFactura(idFacturaNew);
-            }
-            if (numeroHabitacionNew != null) {
-                numeroHabitacionNew = em.getReference(numeroHabitacionNew.getClass(), numeroHabitacionNew.getNumeroHabitacion());
-                reservacion.setNumeroHabitacion(numeroHabitacionNew);
             }
             reservacion = em.merge(reservacion);
             if (idFacturaOld != null && !idFacturaOld.equals(idFacturaNew)) {
@@ -90,14 +77,6 @@ public class ReservacionJpaController implements Serializable {
             if (idFacturaNew != null && !idFacturaNew.equals(idFacturaOld)) {
                 idFacturaNew.getReservacionCollection().add(reservacion);
                 idFacturaNew = em.merge(idFacturaNew);
-            }
-            if (numeroHabitacionOld != null && !numeroHabitacionOld.equals(numeroHabitacionNew)) {
-                numeroHabitacionOld.getReservacionCollection().remove(reservacion);
-                numeroHabitacionOld = em.merge(numeroHabitacionOld);
-            }
-            if (numeroHabitacionNew != null && !numeroHabitacionNew.equals(numeroHabitacionOld)) {
-                numeroHabitacionNew.getReservacionCollection().add(reservacion);
-                numeroHabitacionNew = em.merge(numeroHabitacionNew);
             }
             em.getTransaction().commit();
         } catch (Exception ex) {
@@ -132,11 +111,6 @@ public class ReservacionJpaController implements Serializable {
             if (idFactura != null) {
                 idFactura.getReservacionCollection().remove(reservacion);
                 idFactura = em.merge(idFactura);
-            }
-            Habitacion numeroHabitacion = reservacion.getNumeroHabitacion();
-            if (numeroHabitacion != null) {
-                numeroHabitacion.getReservacionCollection().remove(reservacion);
-                numeroHabitacion = em.merge(numeroHabitacion);
             }
             em.remove(reservacion);
             em.getTransaction().commit();
@@ -192,5 +166,30 @@ public class ReservacionJpaController implements Serializable {
             em.close();
         }
     }
-    
+
+    public List<Habitacion> reservacionesDeUnaFecha(Date fechaInicio, Date fechaFinal) {
+        if (fechaInicio == null || fechaFinal == null) {
+            throw new IllegalArgumentException("Las fechas no pueden ser nulas");
+        }
+
+        EntityManager em = getEntityManager();
+        if (em == null) {
+            throw new IllegalStateException("EntityManager no se pudo obtener. Verifica la inicialización de EntityManagerFactory.");
+        }
+
+        try {
+            Query query = em.createQuery("SELECT DISTINCT r.numeroHabitacion FROM Reservacion r "
+                    + "WHERE r.checkOut > :fechaInicio AND r.checkIn < :fechaFinal");
+            query.setParameter("fechaInicio", fechaInicio);
+            query.setParameter("fechaFinal", fechaFinal);
+            List<Habitacion> habitaciones = query.getResultList();
+            if (habitaciones.isEmpty()) {
+                habitaciones = new ArrayList<>();
+            }
+            return habitaciones;
+        } finally {
+            em.close();
+        }
+    }
+
 }

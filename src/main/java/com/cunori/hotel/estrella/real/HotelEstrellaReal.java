@@ -5,7 +5,9 @@
 
 package com.cunori.hotel.estrella.real;
 
-import com.cunori.views.GUI;
+import com.cunori.views.Gui;
+import com.cunori.views.GuiLogin;
+import com.cunori.views.PanelPerfil;
 
 /**
  *
@@ -14,7 +16,12 @@ import com.cunori.views.GUI;
 public class HotelEstrellaReal {
 
     public static void main(String[] args) {
-        GUI gui = new GUI();
-        gui.setVisible(true);
+        GuiLogin guiLogin = new GuiLogin();
+        Gui gui = new Gui();
+        guiLogin.setGui(gui);
+        gui.setGuiLogin(guiLogin);
+        
+        guiLogin.setVisible(true);
+        //gui.setVisible(true);
     }
 }

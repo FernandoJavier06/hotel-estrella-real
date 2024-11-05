@@ -5,9 +5,7 @@
 package com.cunori.models;
 
 import java.io.Serializable;
-import java.util.Collection;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,7 +13,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -26,8 +23,7 @@ import javax.persistence.Table;
 @Table(name = "habitacion")
 @NamedQueries({
     @NamedQuery(name = "Habitacion.findAll", query = "SELECT h FROM Habitacion h"),
-    @NamedQuery(name = "Habitacion.findByNumeroHabitacion", query = "SELECT h FROM Habitacion h WHERE h.numeroHabitacion = :numeroHabitacion"),
-    @NamedQuery(name = "Habitacion.findByDisponible", query = "SELECT h FROM Habitacion h WHERE h.disponible = :disponible")})
+    @NamedQuery(name = "Habitacion.findByNumeroHabitacion", query = "SELECT h FROM Habitacion h WHERE h.numeroHabitacion = :numeroHabitacion")})
 public class Habitacion implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -35,11 +31,6 @@ public class Habitacion implements Serializable {
     @Basic(optional = false)
     @Column(name = "NUMERO_HABITACION")
     private Short numeroHabitacion;
-    @Basic(optional = false)
-    @Column(name = "DISPONIBLE")
-    private boolean disponible;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "numeroHabitacion")
-    private Collection<Reservacion> reservacionCollection;
     @JoinColumn(name = "ID_TIPO_HABITACION", referencedColumnName = "ID_TIPO_HABITACION")
     @ManyToOne(optional = false)
     private TipoHabitacion idTipoHabitacion;
@@ -51,33 +42,12 @@ public class Habitacion implements Serializable {
         this.numeroHabitacion = numeroHabitacion;
     }
 
-    public Habitacion(Short numeroHabitacion, boolean disponible) {
-        this.numeroHabitacion = numeroHabitacion;
-        this.disponible = disponible;
-    }
-
     public Short getNumeroHabitacion() {
         return numeroHabitacion;
     }
 
     public void setNumeroHabitacion(Short numeroHabitacion) {
         this.numeroHabitacion = numeroHabitacion;
-    }
-
-    public boolean getDisponible() {
-        return disponible;
-    }
-
-    public void setDisponible(boolean disponible) {
-        this.disponible = disponible;
-    }
-
-    public Collection<Reservacion> getReservacionCollection() {
-        return reservacionCollection;
-    }
-
-    public void setReservacionCollection(Collection<Reservacion> reservacionCollection) {
-        this.reservacionCollection = reservacionCollection;
     }
 
     public TipoHabitacion getIdTipoHabitacion() {
@@ -110,7 +80,9 @@ public class Habitacion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cunori.models.Habitacion[ numeroHabitacion=" + numeroHabitacion + " ]";
+        return "Habitacion{" + "numeroHabitacion=" + numeroHabitacion + ", idTipoHabitacion=" + idTipoHabitacion + '}';
     }
+
+    
     
 }

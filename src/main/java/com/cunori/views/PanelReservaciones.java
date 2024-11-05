@@ -4,13 +4,22 @@
  */
 package com.cunori.views;
 
+import com.cunori.controllers.HabitacionJpaController;
+import com.cunori.controllers.ReservacionJpaController;
 import com.cunori.controllers.TipoHabitacionJpaController;
+import com.cunori.models.Habitacion;
+import com.cunori.models.HabitacionDisponibleDTO;
+import com.cunori.models.Reservacion;
 import com.cunori.models.TipoHabitacion;
 import java.awt.Color;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,30 +27,44 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class PanelReservaciones extends javax.swing.JPanel {
 
-    private Color colorEnteredMenu; 
-    private Color colorExitedMenu; 
-    
+    private Color colorEnteredMenu;
+    private Color colorExitedMenu;
+
     private DefaultComboBoxModel modelCmbTipoHabitacion;
-    
+
     private EntityManagerFactory emf;
-    
-    TipoHabitacionJpaController tipoHabitacionEntityManager;
+
+    private TipoHabitacionJpaController tipoHabitacionJpaController;
     private List<TipoHabitacion> tiposHabitacion;
-    
+
+    private HabitacionJpaController habitacionJpaController;
+    private List<Habitacion> habitaciones;
+
+    private ReservacionJpaController reservacionJpaController;
+
+    private DefaultTableModel modelTbHabitacionesDisponibles;
+    private DefaultTableModel modelReservacionesAgregadas;
+
     public PanelReservaciones() {
         initComponents();
-        
-        colorEnteredMenu = new Color(0,87,95);
-        colorExitedMenu = new Color(0,109,119);
-        
+
+        colorEnteredMenu = new Color(0, 87, 95);
+        colorExitedMenu = new Color(0, 109, 119);
+
+        modelTbHabitacionesDisponibles = (DefaultTableModel) tbHabitacionesDisponibles.getModel();
+        modelTbHabitacionesDisponibles.setRowCount(0);
+        modelReservacionesAgregadas = (DefaultTableModel) tbReservacionesAgregadas.getModel();
+        modelReservacionesAgregadas.setRowCount(0);
+
         try {
             emf = Persistence.createEntityManagerFactory("com.cunori.hotel.estrella.real_hotel-estrella-real_jar_1.0-SNAPSHOTPU");
-            tipoHabitacionEntityManager = new TipoHabitacionJpaController(emf);
+            tipoHabitacionJpaController = new TipoHabitacionJpaController(emf);
+            habitacionJpaController = new HabitacionJpaController(emf);
+            reservacionJpaController = new ReservacionJpaController(emf);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-        
-        
+
         initPanelReservaciones();
     }
 
@@ -57,7 +80,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         pNuevaReservacion = new javax.swing.JPanel();
         lbBuscarHabitacionReservacion = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tbHabitaciones = new javax.swing.JTable();
+        tbHabitacionesDisponibles = new javax.swing.JTable();
         jLabel9 = new javax.swing.JLabel();
         cmbTipoHabitacion = new javax.swing.JComboBox<>();
         lbGuardarCambios2 = new javax.swing.JLabel();
@@ -67,13 +90,13 @@ public class PanelReservaciones extends javax.swing.JPanel {
         dcRegistro = new com.toedter.calendar.JDateChooser();
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
-        tbHabitaciones1 = new javax.swing.JTable();
+        tbReservacionesAgregadas = new javax.swing.JTable();
         lbGuardarCambios3 = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
         txtNombreUsuario1 = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
         jLabel15 = new javax.swing.JLabel();
-        lbGuardarCambios4 = new javax.swing.JLabel();
+        lbBorrarReservacion = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
@@ -96,11 +119,14 @@ public class PanelReservaciones extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 lbBuscarHabitacionReservacionMouseExited(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbBuscarHabitacionReservacionMousePressed(evt);
+            }
         });
         pNuevaReservacion.add(lbBuscarHabitacionReservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 200, 80, 30));
 
-        tbHabitaciones.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
-        tbHabitaciones.setModel(new javax.swing.table.DefaultTableModel(
+        tbHabitacionesDisponibles.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
+        tbHabitacionesDisponibles.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null},
                 {null, null, null},
@@ -111,7 +137,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 "Número", "Tipo", "Precio"
             }
         ));
-        jScrollPane1.setViewportView(tbHabitaciones);
+        jScrollPane1.setViewportView(tbHabitacionesDisponibles);
 
         pNuevaReservacion.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 290, 400, 240));
 
@@ -153,6 +179,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         dcSalida.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
         pNuevaReservacion.add(dcSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 80, 210, 30));
 
+        dcRegistro.setBackground(new java.awt.Color(237, 246, 249));
         dcRegistro.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
         pNuevaReservacion.add(dcRegistro, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 80, 210, 30));
 
@@ -161,8 +188,8 @@ public class PanelReservaciones extends javax.swing.JPanel {
         jLabel13.setText("Reservaciones Agregadas");
         pNuevaReservacion.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 40, 270, -1));
 
-        tbHabitaciones1.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
-        tbHabitaciones1.setModel(new javax.swing.table.DefaultTableModel(
+        tbReservacionesAgregadas.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
+        tbReservacionesAgregadas.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -173,7 +200,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 "Habitación", "Tipo", "Precio", "Camas extra", "Registro", "Salida", "Subtotal"
             }
         ));
-        jScrollPane2.setViewportView(tbHabitaciones1);
+        jScrollPane2.setViewportView(tbReservacionesAgregadas);
 
         pNuevaReservacion.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 80, 510, 240));
 
@@ -203,6 +230,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         txtNombreUsuario1.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
         txtNombreUsuario1.setText("Q 0.00");
         txtNombreUsuario1.setBorder(null);
+        txtNombreUsuario1.setDisabledTextColor(java.awt.Color.gray);
         txtNombreUsuario1.setEnabled(false);
         pNuevaReservacion.add(txtNombreUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 510, 230, -1));
 
@@ -214,22 +242,22 @@ public class PanelReservaciones extends javax.swing.JPanel {
         jLabel15.setText("Total *");
         pNuevaReservacion.add(jLabel15, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 480, 160, -1));
 
-        lbGuardarCambios4.setBackground(new java.awt.Color(0, 109, 119));
-        lbGuardarCambios4.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
-        lbGuardarCambios4.setForeground(new java.awt.Color(255, 255, 255));
-        lbGuardarCambios4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbGuardarCambios4.setText("Borrar");
-        lbGuardarCambios4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbGuardarCambios4.setOpaque(true);
-        lbGuardarCambios4.addMouseListener(new java.awt.event.MouseAdapter() {
+        lbBorrarReservacion.setBackground(new java.awt.Color(0, 109, 119));
+        lbBorrarReservacion.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        lbBorrarReservacion.setForeground(new java.awt.Color(255, 255, 255));
+        lbBorrarReservacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbBorrarReservacion.setText("Borrar");
+        lbBorrarReservacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbBorrarReservacion.setOpaque(true);
+        lbBorrarReservacion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbGuardarCambios4MouseEntered(evt);
+                lbBorrarReservacionMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbGuardarCambios4MouseExited(evt);
+                lbBorrarReservacionMouseExited(evt);
             }
         });
-        pNuevaReservacion.add(lbGuardarCambios4, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 290, 80, 30));
+        pNuevaReservacion.add(lbBorrarReservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(1120, 290, 80, 30));
 
         add(pNuevaReservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 1220, 570));
 
@@ -238,17 +266,17 @@ public class PanelReservaciones extends javax.swing.JPanel {
         add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
-    private void initPanelReservaciones(){
+    private void initPanelReservaciones() {
         modelCmbTipoHabitacion = (DefaultComboBoxModel) cmbTipoHabitacion.getModel();
-        tiposHabitacion = tipoHabitacionEntityManager.findTipoHabitacionEntities();
-        
+        tiposHabitacion = tipoHabitacionJpaController.findTipoHabitacionEntities();
+
         for (TipoHabitacion tipoHabitacion : tiposHabitacion) {
             modelCmbTipoHabitacion.addElement(tipoHabitacion);
         }
-        
+
     }
-    
-    
+
+
     private void lbBuscarHabitacionReservacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarHabitacionReservacionMouseEntered
         lbBuscarHabitacionReservacion.setBackground(colorEnteredMenu);
     }//GEN-LAST:event_lbBuscarHabitacionReservacionMouseEntered
@@ -273,14 +301,80 @@ public class PanelReservaciones extends javax.swing.JPanel {
         lbGuardarCambios3.setBackground(colorExitedMenu);
     }//GEN-LAST:event_lbGuardarCambios3MouseExited
 
-    private void lbGuardarCambios4MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios4MouseEntered
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lbGuardarCambios4MouseEntered
+    private void lbBorrarReservacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBorrarReservacionMouseEntered
+        lbBorrarReservacion.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbBorrarReservacionMouseEntered
 
-    private void lbGuardarCambios4MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios4MouseExited
-        // TODO add your handling code here:
-    }//GEN-LAST:event_lbGuardarCambios4MouseExited
+    private void lbBorrarReservacionMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBorrarReservacionMouseExited
+        lbBorrarReservacion.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbBorrarReservacionMouseExited
 
+    private void lbBuscarHabitacionReservacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarHabitacionReservacionMousePressed
+        try {
+            Date fechaRegistro = obtenerFechaNormalizada(dcRegistro.getDate());
+            Date fechaSalida = obtenerFechaNormalizada(dcSalida.getDate());
+            Date fechaActual = obtenerFechaNormalizada(new Date());
+
+            if (fechaRegistro.after(fechaSalida)) {
+                JOptionPane.showMessageDialog(null, "La fecha de registro no puede ser mayor a la fecha de salida.", "Error de fecha", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (fechaRegistro.before(fechaActual) || fechaSalida.before(fechaActual)) {
+                JOptionPane.showMessageDialog(null, "Las fechas de registro y salida NO deben ser antes del día hoy.", "Error de fecha", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (fechaRegistro.equals(fechaSalida)) {
+                JOptionPane.showMessageDialog(null, "La fecha de registro no puede ser igual a la fecha de salida.", "Error de fecha", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            if (cmbTipoHabitacion.getSelectedIndex() < 0) {
+                JOptionPane.showMessageDialog(null, "Seleccione un tipo de habitación.", "Error de entrada", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            List<Habitacion> habitacionesNoDisponibles = reservacionJpaController.reservacionesDeUnaFecha(fechaRegistro, fechaSalida);
+            habitaciones = habitacionJpaController.findHabitacionEntities();
+            if (!habitacionesNoDisponibles.isEmpty()) {
+                for (Habitacion habitacionNoDisponible : habitacionesNoDisponibles) {
+                    habitaciones.remove(habitacionNoDisponible);
+                }
+
+                System.out.println(habitacionesNoDisponibles.toString());
+                System.out.println("Se borraron en teoria");
+            }
+
+            modelTbHabitacionesDisponibles.setRowCount(0);
+            TipoHabitacion tipohabitacion = (TipoHabitacion) cmbTipoHabitacion.getSelectedItem();
+            for (Habitacion habitacion : habitaciones) {
+                if (tipohabitacion.getNombre().equals(habitacion.getIdTipoHabitacion().getNombre())) {
+                    Object[] nuevaColumna = {habitacion.getNumeroHabitacion(),
+                        habitacion.getIdTipoHabitacion().getNombre(),
+                        habitacion.getIdTipoHabitacion().getPrecio()};
+                    modelTbHabitacionesDisponibles.addRow(nuevaColumna);
+                }
+
+            }
+        } catch (NullPointerException errorNull) {
+            JOptionPane.showMessageDialog(null, "¡Valores ingresados NO válidos!", "Error de entrada", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_lbBuscarHabitacionReservacionMousePressed
+    /**
+     *
+     * @param fecha
+     * @return retorna una fecha sin horas, minutos, segundos y milisegundos
+     */
+    private Date obtenerFechaNormalizada(Date fecha) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(fecha);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return cal.getTime();
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbTipoHabitacion;
@@ -296,13 +390,13 @@ public class PanelReservaciones extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JLabel lbBorrarReservacion;
     private javax.swing.JLabel lbBuscarHabitacionReservacion;
     private javax.swing.JLabel lbGuardarCambios2;
     private javax.swing.JLabel lbGuardarCambios3;
-    private javax.swing.JLabel lbGuardarCambios4;
     private javax.swing.JPanel pNuevaReservacion;
-    private javax.swing.JTable tbHabitaciones;
-    private javax.swing.JTable tbHabitaciones1;
+    private javax.swing.JTable tbHabitacionesDisponibles;
+    private javax.swing.JTable tbReservacionesAgregadas;
     private javax.swing.JTextField txtNombreUsuario1;
     // End of variables declaration//GEN-END:variables
 }

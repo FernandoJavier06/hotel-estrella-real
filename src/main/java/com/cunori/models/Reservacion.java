@@ -167,7 +167,9 @@ public class Reservacion implements Serializable {
 
     @Override
     public String toString() {
-        return "com.cunori.models.Reservacion[ idReservacion=" + idReservacion + " ]";
+        return "Reservacion{" + "idReservacion=" + idReservacion + ", checkIn=" + checkIn + ", checkOut=" + checkOut + ", camasExtras=" + camasExtras + ", precioFinal=" + precioFinal + ", idFactura=" + idFactura + ", numeroHabitacion=" + numeroHabitacion.getIdTipoHabitacion().getNombre() + '}';
     }
+
+    
     
 }
