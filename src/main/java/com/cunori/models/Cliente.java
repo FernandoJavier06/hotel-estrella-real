@@ -27,7 +27,6 @@ import javax.persistence.Table;
     @NamedQuery(name = "Cliente.findByNitCliente", query = "SELECT c FROM Cliente c WHERE c.nitCliente = :nitCliente"),
     @NamedQuery(name = "Cliente.findByNombre", query = "SELECT c FROM Cliente c WHERE c.nombre = :nombre"),
     @NamedQuery(name = "Cliente.findByApellidos", query = "SELECT c FROM Cliente c WHERE c.apellidos = :apellidos"),
-    @NamedQuery(name = "Cliente.findByCodPais", query = "SELECT c FROM Cliente c WHERE c.codPais = :codPais"),
     @NamedQuery(name = "Cliente.findByTelefono", query = "SELECT c FROM Cliente c WHERE c.telefono = :telefono")})
 public class Cliente implements Serializable {
 
@@ -43,9 +42,6 @@ public class Cliente implements Serializable {
     @Column(name = "APELLIDOS")
     private String apellidos;
     @Basic(optional = false)
-    @Column(name = "COD_PAIS")
-    private String codPais;
-    @Basic(optional = false)
     @Column(name = "TELEFONO")
     private String telefono;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "nitCliente")
@@ -58,11 +54,10 @@ public class Cliente implements Serializable {
         this.nitCliente = nitCliente;
     }
 
-    public Cliente(String nitCliente, String nombre, String apellidos, String codPais, String telefono) {
+    public Cliente(String nitCliente, String nombre, String apellidos, String telefono) {
         this.nitCliente = nitCliente;
         this.nombre = nombre;
         this.apellidos = apellidos;
-        this.codPais = codPais;
         this.telefono = telefono;
     }
 
@@ -88,14 +83,6 @@ public class Cliente implements Serializable {
 
     public void setApellidos(String apellidos) {
         this.apellidos = apellidos;
-    }
-
-    public String getCodPais() {
-        return codPais;
-    }
-
-    public void setCodPais(String codPais) {
-        this.codPais = codPais;
     }
 
     public String getTelefono() {

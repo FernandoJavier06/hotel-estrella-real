@@ -5,19 +5,18 @@
 package com.cunori.controllers;
 
 import com.cunori.controllers.exceptions.NonexistentEntityException;
-import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import com.cunori.models.Factura;
 import com.cunori.models.Habitacion;
 import com.cunori.models.Reservacion;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.EntityNotFoundException;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -39,16 +38,7 @@ public class ReservacionJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Factura idFactura = reservacion.getIdFactura();
-            if (idFactura != null) {
-                idFactura = em.getReference(idFactura.getClass(), idFactura.getIdFactura());
-                reservacion.setIdFactura(idFactura);
-            }
             em.persist(reservacion);
-            if (idFactura != null) {
-                idFactura.getReservacionCollection().add(reservacion);
-                idFactura = em.merge(idFactura);
-            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -62,22 +52,7 @@ public class ReservacionJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Reservacion persistentReservacion = em.find(Reservacion.class, reservacion.getIdReservacion());
-            Factura idFacturaOld = persistentReservacion.getIdFactura();
-            Factura idFacturaNew = reservacion.getIdFactura();
-            if (idFacturaNew != null) {
-                idFacturaNew = em.getReference(idFacturaNew.getClass(), idFacturaNew.getIdFactura());
-                reservacion.setIdFactura(idFacturaNew);
-            }
             reservacion = em.merge(reservacion);
-            if (idFacturaOld != null && !idFacturaOld.equals(idFacturaNew)) {
-                idFacturaOld.getReservacionCollection().remove(reservacion);
-                idFacturaOld = em.merge(idFacturaOld);
-            }
-            if (idFacturaNew != null && !idFacturaNew.equals(idFacturaOld)) {
-                idFacturaNew.getReservacionCollection().add(reservacion);
-                idFacturaNew = em.merge(idFacturaNew);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -106,11 +81,6 @@ public class ReservacionJpaController implements Serializable {
                 reservacion.getIdReservacion();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The reservacion with id " + id + " no longer exists.", enfe);
-            }
-            Factura idFactura = reservacion.getIdFactura();
-            if (idFactura != null) {
-                idFactura.getReservacionCollection().remove(reservacion);
-                idFactura = em.merge(idFactura);
             }
             em.remove(reservacion);
             em.getTransaction().commit();

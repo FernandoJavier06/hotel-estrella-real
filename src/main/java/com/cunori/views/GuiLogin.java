@@ -286,12 +286,14 @@ public class GuiLogin extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
             this.txtCorreo.setText("");
             this.txtContrasenia.setText("");
-            //this.txtContrasenia.requestFocusInWindow();
             this.txtCorreo.requestFocusInWindow();
         }
         }
         catch(Exception e){
             JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
+            this.txtCorreo.setText("");
+            this.txtContrasenia.setText("");
+            this.txtCorreo.requestFocusInWindow();
             System.err.println(e.getMessage());
         }
     }//GEN-LAST:event_lbBuscarHabitacionReservacionMouseClicked

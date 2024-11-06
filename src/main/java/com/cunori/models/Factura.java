@@ -6,10 +6,8 @@ package com.cunori.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +17,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,7 +30,9 @@ import javax.persistence.TemporalType;
 @NamedQueries({
     @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
     @NamedQuery(name = "Factura.findByIdFactura", query = "SELECT f FROM Factura f WHERE f.idFactura = :idFactura"),
-    @NamedQuery(name = "Factura.findByFechaCreacion", query = "SELECT f FROM Factura f WHERE f.fechaCreacion = :fechaCreacion"),
+    @NamedQuery(name = "Factura.findByUuid", query = "SELECT f FROM Factura f WHERE f.uuid = :uuid"),
+    @NamedQuery(name = "Factura.findByFechaEmision", query = "SELECT f FROM Factura f WHERE f.fechaEmision = :fechaEmision"),
+    @NamedQuery(name = "Factura.findByFechaCertificacion", query = "SELECT f FROM Factura f WHERE f.fechaCertificacion = :fechaCertificacion"),
     @NamedQuery(name = "Factura.findByIva", query = "SELECT f FROM Factura f WHERE f.iva = :iva"),
     @NamedQuery(name = "Factura.findByInguat", query = "SELECT f FROM Factura f WHERE f.inguat = :inguat"),
     @NamedQuery(name = "Factura.findByTotal", query = "SELECT f FROM Factura f WHERE f.total = :total")})
@@ -45,10 +44,14 @@ public class Factura implements Serializable {
     @Basic(optional = false)
     @Column(name = "ID_FACTURA")
     private Integer idFactura;
-    @Basic(optional = false)
-    @Column(name = "FECHA_CREACION")
+    @Column(name = "UUID")
+    private String uuid;
+    @Column(name = "FECHA_EMISION")
     @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaCreacion;
+    private Date fechaEmision;
+    @Column(name = "FECHA_CERTIFICACION")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCertificacion;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Basic(optional = false)
     @Column(name = "IVA")
@@ -59,8 +62,6 @@ public class Factura implements Serializable {
     @Basic(optional = false)
     @Column(name = "TOTAL")
     private BigDecimal total;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFactura")
-    private Collection<Reservacion> reservacionCollection;
     @JoinColumn(name = "NIT_CLIENTE", referencedColumnName = "NIT_CLIENTE")
     @ManyToOne(optional = false)
     private Cliente nitCliente;
@@ -72,9 +73,8 @@ public class Factura implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public Factura(Integer idFactura, Date fechaCreacion, BigDecimal iva, BigDecimal inguat, BigDecimal total) {
+    public Factura(Integer idFactura, BigDecimal iva, BigDecimal inguat, BigDecimal total) {
         this.idFactura = idFactura;
-        this.fechaCreacion = fechaCreacion;
         this.iva = iva;
         this.inguat = inguat;
         this.total = total;
@@ -88,12 +88,28 @@ public class Factura implements Serializable {
         this.idFactura = idFactura;
     }
 
-    public Date getFechaCreacion() {
-        return fechaCreacion;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setFechaCreacion(Date fechaCreacion) {
-        this.fechaCreacion = fechaCreacion;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public Date getFechaEmision() {
+        return fechaEmision;
+    }
+
+    public void setFechaEmision(Date fechaEmision) {
+        this.fechaEmision = fechaEmision;
+    }
+
+    public Date getFechaCertificacion() {
+        return fechaCertificacion;
+    }
+
+    public void setFechaCertificacion(Date fechaCertificacion) {
+        this.fechaCertificacion = fechaCertificacion;
     }
 
     public BigDecimal getIva() {
@@ -118,14 +134,6 @@ public class Factura implements Serializable {
 
     public void setTotal(BigDecimal total) {
         this.total = total;
-    }
-
-    public Collection<Reservacion> getReservacionCollection() {
-        return reservacionCollection;
-    }
-
-    public void setReservacionCollection(Collection<Reservacion> reservacionCollection) {
-        this.reservacionCollection = reservacionCollection;
     }
 
     public Cliente getNitCliente() {
