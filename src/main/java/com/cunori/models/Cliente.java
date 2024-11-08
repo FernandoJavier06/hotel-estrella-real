@@ -27,7 +27,12 @@ import javax.persistence.Table;
     @NamedQuery(name = "Cliente.findByNitCliente", query = "SELECT c FROM Cliente c WHERE c.nitCliente = :nitCliente"),
     @NamedQuery(name = "Cliente.findByNombre", query = "SELECT c FROM Cliente c WHERE c.nombre = :nombre"),
     @NamedQuery(name = "Cliente.findByApellidos", query = "SELECT c FROM Cliente c WHERE c.apellidos = :apellidos"),
-    @NamedQuery(name = "Cliente.findByTelefono", query = "SELECT c FROM Cliente c WHERE c.telefono = :telefono")})
+    @NamedQuery(name = "Cliente.findByTelefono", query = "SELECT c FROM Cliente c WHERE c.telefono = :telefono"),
+    @NamedQuery(name = "Cliente.findAllByNit", query = "SELECT c FROM Cliente c WHERE c.nitCliente LIKE :nitCliente"),
+    @NamedQuery(name = "Cliente.findAllByNombre", query = "SELECT c FROM Cliente c WHERE c.nombre LIKE :nombreCliente"),
+    @NamedQuery(name = "Cliente.findAllByApellidos", query = "SELECT c FROM Cliente c WHERE c.apellidos LIKE :apellidosCliente"),
+    @NamedQuery(name = "Cliente.nitExistente", query = "SELECT COUNT(c) FROM Cliente c WHERE c.nitCliente = :nitCliente")
+})
 public class Cliente implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -125,5 +130,5 @@ public class Cliente implements Serializable {
     public String toString() {
         return "com.cunori.models.Cliente[ nitCliente=" + nitCliente + " ]";
     }
-    
+
 }

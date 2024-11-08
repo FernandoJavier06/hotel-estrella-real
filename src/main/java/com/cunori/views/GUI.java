@@ -54,6 +54,7 @@ public class Gui extends javax.swing.JFrame {
         pBody.add(panelPerfil,new org.netbeans.lib.awtextra.AbsoluteConstraints(0,0));
         panelReservaciones = new PanelReservaciones();
         pBody.add(panelReservaciones,new org.netbeans.lib.awtextra.AbsoluteConstraints(0,0));
+        panelReservaciones.setGui(this);
         
         try {
             emf = Persistence.createEntityManagerFactory("com.cunori.hotel.estrella.real_hotel-estrella-real_jar_1.0-SNAPSHOTPU");

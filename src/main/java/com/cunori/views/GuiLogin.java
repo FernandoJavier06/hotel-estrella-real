@@ -120,14 +120,14 @@ public class GuiLogin extends javax.swing.JFrame {
         lbBuscarHabitacionReservacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         lbBuscarHabitacionReservacion.setOpaque(true);
         lbBuscarHabitacionReservacion.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lbBuscarHabitacionReservacionMouseClicked(evt);
-            }
             public void mouseEntered(java.awt.event.MouseEvent evt) {
                 lbBuscarHabitacionReservacionMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 lbBuscarHabitacionReservacionMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbBuscarHabitacionReservacionMousePressed(evt);
             }
         });
 
@@ -251,53 +251,6 @@ public class GuiLogin extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_txtContraseniaFocusGained
 
-    private void lbBuscarHabitacionReservacionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarHabitacionReservacionMouseClicked
-        try{
-        String correo = txtCorreo.getText();
-        String passWord = new String(txtContrasenia.getPassword());
-        listUsuarios = usuarioJpaController.findUsuarioEntities();
-        
-        if (listUsuarios == null || listUsuarios.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
-            System.err.println("Listado vacio");
-            return;
-        }
-        usuario = new Usuario();
-        for (Usuario listUsuario : listUsuarios) {
-            if (listUsuario.getCorreo().equals(correo)) {
-                usuario = listUsuario;
-                break;
-            }
-        }
-        if (usuario.getCorreo() == null) {
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
-            System.err.println("Usuario no econtrado");
-            return;
-        }
-
-        if (BCrypt.checkpw(passWord, usuario.getContrasenia())) {
-            //JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso!", "inicio de sesión", JOptionPane.INFORMATION_MESSAGE);
-            this.gui.setUsuario(usuario);
-            this.gui.tipoRol();
-            this.gui.mandarDatosPerfil();
-            this.setVisible(false);
-            this.gui.setVisible(true);
-        } else {
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
-            this.txtCorreo.setText("");
-            this.txtContrasenia.setText("");
-            this.txtCorreo.requestFocusInWindow();
-        }
-        }
-        catch(Exception e){
-            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
-            this.txtCorreo.setText("");
-            this.txtContrasenia.setText("");
-            this.txtCorreo.requestFocusInWindow();
-            System.err.println(e.getMessage());
-        }
-    }//GEN-LAST:event_lbBuscarHabitacionReservacionMouseClicked
-
     private void lbLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLoginMouseClicked
         usuario.setNitUsuario("112233445");
         usuario.setNombre("Juan");
@@ -314,6 +267,55 @@ public class GuiLogin extends javax.swing.JFrame {
             Logger.getLogger(GuiLogin.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lbLoginMouseClicked
+
+    private void lbBuscarHabitacionReservacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarHabitacionReservacionMousePressed
+        try {
+            String correo = txtCorreo.getText();
+            String passWord = new String(txtContrasenia.getPassword());
+            listUsuarios = usuarioJpaController.findUsuarioEntities();
+
+            if (listUsuarios == null || listUsuarios.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
+                System.err.println("Listado vacio");
+                return;
+            }
+            usuario = new Usuario();
+            for (Usuario listUsuario : listUsuarios) {
+                if (listUsuario.getCorreo().equals(correo)) {
+                    usuario = listUsuario;
+                    break;
+                }
+            }
+            if (usuario.getCorreo() == null) {
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
+                this.txtCorreo.setText("");
+                this.txtContrasenia.setText("");
+                this.txtCorreo.requestFocusInWindow();
+                System.err.println("Usuario no econtrado");
+                return;
+            }
+
+            if (BCrypt.checkpw(passWord, usuario.getContrasenia())) {
+                //JOptionPane.showMessageDialog(null, "Inicio de sesión exitoso!", "inicio de sesión", JOptionPane.INFORMATION_MESSAGE);
+                this.gui.setUsuario(usuario);
+                this.gui.tipoRol();
+                this.gui.mandarDatosPerfil();
+                this.setVisible(false);
+                this.gui.setVisible(true);
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
+                this.txtCorreo.setText("");
+                this.txtContrasenia.setText("");
+                this.txtCorreo.requestFocusInWindow();
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos", "Error de inicio de sesión", JOptionPane.ERROR_MESSAGE);
+            this.txtCorreo.setText("");
+            this.txtContrasenia.setText("");
+            this.txtCorreo.requestFocusInWindow();
+            System.err.println(e.getMessage());
+        }
+    }//GEN-LAST:event_lbBuscarHabitacionReservacionMousePressed
 
     /**
      * @param args the command line arguments

@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 /**
  *
@@ -201,6 +202,51 @@ public class ClienteJpaController implements Serializable {
             cq.select(em.getCriteriaBuilder().count(rt));
             Query q = em.createQuery(cq);
             return ((Long) q.getSingleResult()).intValue();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<Cliente> findAllByNit(String nitCliente){
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Cliente> query = em.createNamedQuery("Cliente.findAllByNit",Cliente.class);
+            query.setParameter("nitCliente", nitCliente + "%");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<Cliente> findAllByNombre(String nombreCliente){
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Cliente> query = em.createNamedQuery("Cliente.findAllByNombre", Cliente.class);
+            query.setParameter("nombreCliente", nombreCliente + "%");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public List<Cliente> findAllByApellidos(String apellidosCliente){
+        EntityManager em = getEntityManager();
+        try {
+            TypedQuery<Cliente> query = em.createNamedQuery("Cliente.findAllByApellidos", Cliente.class);
+            query.setParameter("apellidosCliente", apellidosCliente + "%");
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
+    
+    public short nitExistente(String nitCliente){
+        EntityManager em = getEntityManager();
+        try {
+            Query query = em.createNamedQuery("Cliente.nitExistente");
+            query.setParameter("nitCliente", nitCliente);
+            Long result = (Long) query.getSingleResult();
+            return  result.shortValue();
         } finally {
             em.close();
         }

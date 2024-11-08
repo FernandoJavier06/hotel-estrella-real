@@ -14,6 +14,7 @@ import com.cunori.models.TipoHabitacion;
 import java.awt.Color;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.temporal.ChronoUnit;
 import java.util.Calendar;
@@ -26,6 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -33,6 +36,8 @@ import java.time.ZoneId;
  */
 public class PanelReservaciones extends javax.swing.JPanel {
 
+    private Gui gui;
+    private GuiConfirmacionClientes guiConfirmacionClientes;
     private Color colorEnteredMenu;
     private Color colorExitedMenu;
 
@@ -57,17 +62,23 @@ public class PanelReservaciones extends javax.swing.JPanel {
     private BigDecimal subtotal;
     private SimpleDateFormat formatoFechaDMA;
     private SimpleDateFormat formatoFechaAMD;
+    private BigDecimal total = new BigDecimal("0");
 
     public PanelReservaciones() {
         initComponents();
 
         colorEnteredMenu = new Color(0, 87, 95);
         colorExitedMenu = new Color(0, 109, 119);
+        
+        guiConfirmacionClientes = new GuiConfirmacionClientes();
+        guiConfirmacionClientes.setPanelReservaciones(this);
 
         modelTbHabitacionesDisponibles = (DefaultTableModel) tbHabitacionesDisponibles.getModel();
         modelTbHabitacionesDisponibles.setRowCount(0);
         modelReservacionesAgregadas = (DefaultTableModel) tbReservacionesAgregadas.getModel();
         modelReservacionesAgregadas.setRowCount(0);
+        tbReservacionesAgregadas.getColumnModel().getColumn(5).setPreferredWidth(100);
+        tbReservacionesAgregadas.getColumnModel().getColumn(6).setPreferredWidth(100);
         formatoFechaDMA = new SimpleDateFormat("dd/MM/yyyy");
         formatoFechaAMD = new SimpleDateFormat("yyyy/MM/yyyy");
 
@@ -106,9 +117,9 @@ public class PanelReservaciones extends javax.swing.JPanel {
         jLabel13 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tbReservacionesAgregadas = new javax.swing.JTable();
-        lbGuardarCambios3 = new javax.swing.JLabel();
+        lbAniadirHabitacion = new javax.swing.JLabel();
         jLabel14 = new javax.swing.JLabel();
-        txtNombreUsuario1 = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
         jSeparator9 = new javax.swing.JSeparator();
         jLabel15 = new javax.swing.JLabel();
         lbBorrarReservacion = new javax.swing.JLabel();
@@ -167,7 +178,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         jLabel9.setBackground(new java.awt.Color(0, 87, 95));
         jLabel9.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
         jLabel9.setText("Salida *");
-        pNuevaReservacion.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 40, 210, 30));
+        pNuevaReservacion.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 40, 210, 30));
 
         cmbTipoHabitacion.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
         pNuevaReservacion.add(cmbTipoHabitacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 190, 290, 40));
@@ -186,6 +197,9 @@ public class PanelReservaciones extends javax.swing.JPanel {
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 lbGuardarCambios2MouseExited(evt);
             }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbGuardarCambios2MousePressed(evt);
+            }
         });
         pNuevaReservacion.add(lbGuardarCambios2, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 510, 210, 30));
 
@@ -200,7 +214,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         pNuevaReservacion.add(jLabel12, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 40, 210, 30));
 
         dcSalida.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
-        pNuevaReservacion.add(dcSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 80, 210, 30));
+        pNuevaReservacion.add(dcSalida, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 80, 210, 30));
 
         dcRegistro.setBackground(new java.awt.Color(237, 246, 249));
         dcRegistro.setFont(new java.awt.Font("Roboto Light", 0, 18)); // NOI18N
@@ -220,7 +234,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 {null, null, null, null, null, null, null, null}
             },
             new String [] {
-                "Habitación", "Tipo", "Precio", "Cant. Noches", "Camas extra", "Registro", "Salida", "Subtotal"
+                "Habitación", "Tipo", "Precio", "Noches", "Camas extra", "Registro", "Salida", "Subtotal"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -235,38 +249,38 @@ public class PanelReservaciones extends javax.swing.JPanel {
 
         pNuevaReservacion.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 80, 710, 240));
 
-        lbGuardarCambios3.setBackground(new java.awt.Color(0, 109, 119));
-        lbGuardarCambios3.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
-        lbGuardarCambios3.setForeground(new java.awt.Color(255, 255, 255));
-        lbGuardarCambios3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lbGuardarCambios3.setText("Añadir");
-        lbGuardarCambios3.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        lbGuardarCambios3.setOpaque(true);
-        lbGuardarCambios3.addMouseListener(new java.awt.event.MouseAdapter() {
+        lbAniadirHabitacion.setBackground(new java.awt.Color(0, 109, 119));
+        lbAniadirHabitacion.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        lbAniadirHabitacion.setForeground(new java.awt.Color(255, 255, 255));
+        lbAniadirHabitacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbAniadirHabitacion.setText("Añadir");
+        lbAniadirHabitacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbAniadirHabitacion.setOpaque(true);
+        lbAniadirHabitacion.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                lbGuardarCambios3MouseEntered(evt);
+                lbAniadirHabitacionMouseEntered(evt);
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
-                lbGuardarCambios3MouseExited(evt);
+                lbAniadirHabitacionMouseExited(evt);
             }
             public void mousePressed(java.awt.event.MouseEvent evt) {
-                lbGuardarCambios3MousePressed(evt);
+                lbAniadirHabitacionMousePressed(evt);
             }
         });
-        pNuevaReservacion.add(lbGuardarCambios3, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 500, 80, 30));
+        pNuevaReservacion.add(lbAniadirHabitacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 500, 80, 30));
 
         jLabel14.setBackground(new java.awt.Color(0, 87, 95));
         jLabel14.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
         jLabel14.setText("Habitaciones disponibles ");
         pNuevaReservacion.add(jLabel14, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 250, 270, -1));
 
-        txtNombreUsuario1.setBackground(new java.awt.Color(237, 246, 249));
-        txtNombreUsuario1.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
-        txtNombreUsuario1.setText("Q 0.00");
-        txtNombreUsuario1.setBorder(null);
-        txtNombreUsuario1.setDisabledTextColor(java.awt.Color.gray);
-        txtNombreUsuario1.setEnabled(false);
-        pNuevaReservacion.add(txtNombreUsuario1, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 510, 230, -1));
+        txtTotal.setBackground(new java.awt.Color(237, 246, 249));
+        txtTotal.setFont(new java.awt.Font("Roboto Light", 0, 22)); // NOI18N
+        txtTotal.setText("Q 0.00");
+        txtTotal.setBorder(null);
+        txtTotal.setDisabledTextColor(java.awt.Color.gray);
+        txtTotal.setEnabled(false);
+        pNuevaReservacion.add(txtTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 510, 230, -1));
 
         jSeparator9.setForeground(new java.awt.Color(0, 0, 0));
         pNuevaReservacion.add(jSeparator9, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 540, 230, 10));
@@ -289,6 +303,9 @@ public class PanelReservaciones extends javax.swing.JPanel {
             }
             public void mouseExited(java.awt.event.MouseEvent evt) {
                 lbBorrarReservacionMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbBorrarReservacionMousePressed(evt);
             }
         });
         pNuevaReservacion.add(lbBorrarReservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 330, 170, 30));
@@ -327,13 +344,13 @@ public class PanelReservaciones extends javax.swing.JPanel {
         lbGuardarCambios2.setBackground(colorExitedMenu);
     }//GEN-LAST:event_lbGuardarCambios2MouseExited
 
-    private void lbGuardarCambios3MouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios3MouseEntered
-        lbGuardarCambios3.setBackground(colorEnteredMenu);
-    }//GEN-LAST:event_lbGuardarCambios3MouseEntered
+    private void lbAniadirHabitacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbAniadirHabitacionMouseEntered
+        lbAniadirHabitacion.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbAniadirHabitacionMouseEntered
 
-    private void lbGuardarCambios3MouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios3MouseExited
-        lbGuardarCambios3.setBackground(colorExitedMenu);
-    }//GEN-LAST:event_lbGuardarCambios3MouseExited
+    private void lbAniadirHabitacionMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbAniadirHabitacionMouseExited
+        lbAniadirHabitacion.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbAniadirHabitacionMouseExited
 
     private void lbBorrarReservacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBorrarReservacionMouseEntered
         lbBorrarReservacion.setBackground(colorEnteredMenu);
@@ -375,9 +392,17 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 for (Habitacion habitacionNoDisponible : habitacionesNoDisponibles) {
                     habitaciones.remove(habitacionNoDisponible);
                 }
+            }
 
-                System.out.println(habitacionesNoDisponibles.toString());
-                System.out.println("Se borraron en teoria");
+            if (modelReservacionesAgregadas.getRowCount() > 0 && !habitaciones.isEmpty()) {
+                for (int i = 0; i < modelReservacionesAgregadas.getRowCount(); i++) {
+                    Date fechaRegistro1 = obtenerFechaNormalizada(formatoFechaDMA.parse((String) tbReservacionesAgregadas.getValueAt(i, 5)));
+                    Date fechaSalida1 = obtenerFechaNormalizada(formatoFechaDMA.parse((String) tbReservacionesAgregadas.getValueAt(i, 6)));
+                    
+                    if (fechaSalida1.after(fechaRegistro) && fechaRegistro1.before(fechaSalida)) {
+                        habitaciones.remove(habitacionJpaController.findHabitacion((Short) tbReservacionesAgregadas.getValueAt(i, 0)));
+                    }
+                }
             }
 
             modelTbHabitacionesDisponibles.setRowCount(0);
@@ -393,10 +418,12 @@ public class PanelReservaciones extends javax.swing.JPanel {
             }
         } catch (NullPointerException errorNull) {
             JOptionPane.showMessageDialog(null, "¡Valores ingresados NO válidos!", "Error de entrada", JOptionPane.ERROR_MESSAGE);
+        } catch (ParseException ex) {
+            Logger.getLogger(PanelReservaciones.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_lbBuscarHabitacionReservacionMousePressed
 
-    private void lbGuardarCambios3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios3MousePressed
+    private void lbAniadirHabitacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbAniadirHabitacionMousePressed
         if (tbHabitacionesDisponibles.getSelectedRowCount() > 1 || tbHabitacionesDisponibles.getSelectedRow() == -1) {
             tbHabitacionesDisponibles.clearSelection();
             JOptionPane.showMessageDialog(null, "Debe seleccionar una habitación.", "Error de selección.", JOptionPane.ERROR_MESSAGE);
@@ -407,12 +434,17 @@ public class PanelReservaciones extends javax.swing.JPanel {
             String camasExtrasString = JOptionPane.showInputDialog(null, "Ingresa la cantidad de camas extras: ", "Camas extras", JOptionPane.DEFAULT_OPTION);
 
             if (camasExtrasString == null) {
-                System.out.println("Si es nulo uwu");
                 return;
-            } else if (camasExtrasString.equals("")) {
+            } else if (camasExtrasString.trim().equals("")) {
                 camasExtrasString = "0";
             }
-            camasExtrasInteger = Integer.valueOf(camasExtrasString);
+            camasExtrasInteger = Integer.valueOf(camasExtrasString.trim());
+            
+            if (camasExtrasInteger > 2) {
+                JOptionPane.showMessageDialog(null, "Solo se pueden registrar 2 camas extras como máximo.", "Advertencia de entrada", JOptionPane.INFORMATION_MESSAGE);
+                return;
+            }
+            
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Cantidad de camas no valida", "Error de entrada", JOptionPane.ERROR_MESSAGE);
             return;
@@ -426,19 +458,45 @@ public class PanelReservaciones extends javax.swing.JPanel {
         subtotal = subtotal.multiply(BigDecimal.valueOf(cantNoches));
         subtotal = subtotal.add(BigDecimal.valueOf(camasExtrasInteger * 125));
         subtotal = subtotal.setScale(2, RoundingMode.HALF_UP);
-        
 
         Object[] habitacionAgregada = {habitacion.getNumeroHabitacion(),
             habitacion.getIdTipoHabitacion().getNombre(),
             habitacion.getIdTipoHabitacion().getPrecio(),
-            cantNoches,  
+            cantNoches,
             camasExtrasInteger, formatoFechaDMA.format(fechaRegistro), formatoFechaDMA.format(fechaSalida),
             subtotal
         };
-
+        total = total.add(subtotal);
+        txtTotal.setText("Q " + total);
         modelReservacionesAgregadas.addRow(habitacionAgregada);
+        modelTbHabitacionesDisponibles.removeRow(tbHabitacionesDisponibles.getSelectedRow());
+    }//GEN-LAST:event_lbAniadirHabitacionMousePressed
 
-    }//GEN-LAST:event_lbGuardarCambios3MousePressed
+    private void lbBorrarReservacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBorrarReservacionMousePressed
+        if (tbReservacionesAgregadas.getSelectedRowCount() > 1 || tbReservacionesAgregadas.getSelectedRow() == -1) {
+            tbReservacionesAgregadas.clearSelection();
+            JOptionPane.showMessageDialog(null, "Debe seleccionar una habitación.", "Error de selección.", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String subTString = tbReservacionesAgregadas.getValueAt(tbReservacionesAgregadas.getSelectedRow(), 7).toString();
+        BigDecimal subT = new BigDecimal(subTString);
+        total = total.subtract(subT);
+        txtTotal.setText("Q " + total);
+        modelReservacionesAgregadas.removeRow(tbReservacionesAgregadas.getSelectedRow());
+    }//GEN-LAST:event_lbBorrarReservacionMousePressed
+
+    private void lbGuardarCambios2MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambios2MousePressed
+        if (tbReservacionesAgregadas.getRowCount() == 0) {
+            JOptionPane.showMessageDialog(null, "No hay reservaciones agregadas.", "Error de confirmación.", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        
+        if (JOptionPane.showConfirmDialog(null, "¿Desea confirmar la reservación?", "Confirmación de reservación", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+            guiConfirmacionClientes.setVisible(true);
+            gui.setEnabled(false);
+        }
+        
+    }//GEN-LAST:event_lbGuardarCambios2MousePressed
     /**
      *
      * @param fecha
@@ -454,6 +512,25 @@ public class PanelReservaciones extends javax.swing.JPanel {
         return cal.getTime();
     }
 
+    public Gui getGui() {
+        return gui;
+    }
+
+    public void setGui(Gui gui) {
+        this.gui = gui;
+    }
+
+    public GuiConfirmacionClientes getGuiConfirmacionClientes() {
+        return guiConfirmacionClientes;
+    }
+
+    public void setGuiConfirmacionClientes(GuiConfirmacionClientes guiConfirmacionClientes) {
+        this.guiConfirmacionClientes = guiConfirmacionClientes;
+    }
+
+    
+    
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbTipoHabitacion;
     private com.toedter.calendar.JDateChooser dcRegistro;
@@ -468,13 +545,13 @@ public class PanelReservaciones extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator9;
+    private javax.swing.JLabel lbAniadirHabitacion;
     private javax.swing.JLabel lbBorrarReservacion;
     private javax.swing.JLabel lbBuscarHabitacionReservacion;
     private javax.swing.JLabel lbGuardarCambios2;
-    private javax.swing.JLabel lbGuardarCambios3;
     private javax.swing.JPanel pNuevaReservacion;
     private javax.swing.JTable tbHabitacionesDisponibles;
     private javax.swing.JTable tbReservacionesAgregadas;
-    private javax.swing.JTextField txtNombreUsuario1;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }
