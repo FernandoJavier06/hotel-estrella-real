@@ -101,12 +101,17 @@ public class GuiConfirmacionClientes extends javax.swing.JFrame {
         lbAceptarNuevoCliente = new javax.swing.JLabel();
         lbCancelar = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
         setBackground(new java.awt.Color(255, 255, 255));
         setMinimumSize(new java.awt.Dimension(1100, 655));
         setPreferredSize(new java.awt.Dimension(1150, 655));
         setResizable(false);
         setSize(new java.awt.Dimension(1100, 680));
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosing(java.awt.event.WindowEvent evt) {
+                formWindowClosing(evt);
+            }
+        });
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -471,6 +476,10 @@ public class GuiConfirmacionClientes extends javax.swing.JFrame {
         clienteSeleccionado.setNombre(tbClientes.getValueAt(tbClientes.getSelectedRow(), 1).toString());
         clienteSeleccionado.setApellidos(tbClientes.getValueAt(tbClientes.getSelectedRow(), 2).toString());
         clienteSeleccionado.setTelefono(tbClientes.getValueAt(tbClientes.getSelectedRow(), 3).toString());
+        panelReservaciones.clienteSeleccionado(clienteSeleccionado);
+        panelReservaciones.getGui().setEnabled(true);
+        limpiarGuiConfirmacion();
+        this.dispose();
     }//GEN-LAST:event_lbSeleccionarClienteMousePressed
 
     private void lbBuscarClienteMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarClienteMouseEntered
@@ -570,6 +579,12 @@ public class GuiConfirmacionClientes extends javax.swing.JFrame {
         lbCancelar.setVisible(false);
     }//GEN-LAST:event_lbCancelarMousePressed
 
+    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+        panelReservaciones.getGui().setEnabled(true);
+        limpiarGuiConfirmacion();
+        this.dispose();
+    }//GEN-LAST:event_formWindowClosing
+
     private void vaciarTextos() {
         txtNit.setText("");
         txtNombre.setText("");
@@ -582,6 +597,18 @@ public class GuiConfirmacionClientes extends javax.swing.JFrame {
         txtNombre.setEnabled(ok);
         txtApellidos.setEnabled(ok);
         txtTelefono.setEnabled(ok);
+    }
+    
+    private void limpiarGuiConfirmacion(){
+        vaciarTextos();
+        isHabilitarTextos(false);
+        lbAceptarNuevoCliente.setVisible(false);
+        lbCancelar.setVisible(false);
+        lbAgregarCliente.setEnabled(true);
+        lbSeleccionarCliente.setEnabled(true);
+        modelTbClientes.setRowCount(0);
+        cmbBuscar.setSelectedIndex(0);
+        txtBuscar.setText("");
     }
 
     public PanelReservaciones getPanelReservaciones() {

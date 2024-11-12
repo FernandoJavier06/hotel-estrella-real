@@ -5,16 +5,15 @@
 package com.cunori.controllers;
 
 import com.cunori.controllers.exceptions.NonexistentEntityException;
+import com.cunori.models.Factura;
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Query;
 import javax.persistence.EntityNotFoundException;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
-import com.cunori.models.Cliente;
-import com.cunori.models.Factura;
-import java.util.List;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 
 /**
  *
@@ -36,16 +35,7 @@ public class FacturaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Cliente nitCliente = factura.getNitCliente();
-            if (nitCliente != null) {
-                nitCliente = em.getReference(nitCliente.getClass(), nitCliente.getNitCliente());
-                factura.setNitCliente(nitCliente);
-            }
             em.persist(factura);
-            if (nitCliente != null) {
-                nitCliente.getFacturaCollection().add(factura);
-                nitCliente = em.merge(nitCliente);
-            }
             em.getTransaction().commit();
         } finally {
             if (em != null) {
@@ -59,22 +49,7 @@ public class FacturaJpaController implements Serializable {
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Factura persistentFactura = em.find(Factura.class, factura.getIdFactura());
-            Cliente nitClienteOld = persistentFactura.getNitCliente();
-            Cliente nitClienteNew = factura.getNitCliente();
-            if (nitClienteNew != null) {
-                nitClienteNew = em.getReference(nitClienteNew.getClass(), nitClienteNew.getNitCliente());
-                factura.setNitCliente(nitClienteNew);
-            }
             factura = em.merge(factura);
-            if (nitClienteOld != null && !nitClienteOld.equals(nitClienteNew)) {
-                nitClienteOld.getFacturaCollection().remove(factura);
-                nitClienteOld = em.merge(nitClienteOld);
-            }
-            if (nitClienteNew != null && !nitClienteNew.equals(nitClienteOld)) {
-                nitClienteNew.getFacturaCollection().add(factura);
-                nitClienteNew = em.merge(nitClienteNew);
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -103,11 +78,6 @@ public class FacturaJpaController implements Serializable {
                 factura.getIdFactura();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The factura with id " + id + " no longer exists.", enfe);
-            }
-            Cliente nitCliente = factura.getNitCliente();
-            if (nitCliente != null) {
-                nitCliente.getFacturaCollection().remove(factura);
-                nitCliente = em.merge(nitCliente);
             }
             em.remove(factura);
             em.getTransaction().commit();

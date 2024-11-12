@@ -233,7 +233,6 @@ public class PanelPerfil extends javax.swing.JPanel {
     }//GEN-LAST:event_lbCambiarContraseniaMouseExited
 
     private void lbGuardarCambiosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbGuardarCambiosMousePressed
-        JOptionPane.showMessageDialog(null, "Hola", "Saludo", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_lbGuardarCambiosMousePressed
 
     public void datosPerfil(){

@@ -4,22 +4,18 @@
  */
 package com.cunori.controllers;
 
-import com.cunori.controllers.exceptions.IllegalOrphanException;
 import com.cunori.controllers.exceptions.NonexistentEntityException;
 import com.cunori.controllers.exceptions.PreexistingEntityException;
 import com.cunori.models.Cliente;
 import java.io.Serializable;
-import javax.persistence.Query;
-import javax.persistence.EntityNotFoundException;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import com.cunori.models.Factura;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  *
@@ -37,29 +33,11 @@ public class ClienteJpaController implements Serializable {
     }
 
     public void create(Cliente cliente) throws PreexistingEntityException, Exception {
-        if (cliente.getFacturaCollection() == null) {
-            cliente.setFacturaCollection(new ArrayList<Factura>());
-        }
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Collection<Factura> attachedFacturaCollection = new ArrayList<Factura>();
-            for (Factura facturaCollectionFacturaToAttach : cliente.getFacturaCollection()) {
-                facturaCollectionFacturaToAttach = em.getReference(facturaCollectionFacturaToAttach.getClass(), facturaCollectionFacturaToAttach.getIdFactura());
-                attachedFacturaCollection.add(facturaCollectionFacturaToAttach);
-            }
-            cliente.setFacturaCollection(attachedFacturaCollection);
             em.persist(cliente);
-            for (Factura facturaCollectionFactura : cliente.getFacturaCollection()) {
-                Cliente oldNitClienteOfFacturaCollectionFactura = facturaCollectionFactura.getNitCliente();
-                facturaCollectionFactura.setNitCliente(cliente);
-                facturaCollectionFactura = em.merge(facturaCollectionFactura);
-                if (oldNitClienteOfFacturaCollectionFactura != null) {
-                    oldNitClienteOfFacturaCollectionFactura.getFacturaCollection().remove(facturaCollectionFactura);
-                    oldNitClienteOfFacturaCollectionFactura = em.merge(oldNitClienteOfFacturaCollectionFactura);
-                }
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             if (findCliente(cliente.getNitCliente()) != null) {
@@ -73,45 +51,12 @@ public class ClienteJpaController implements Serializable {
         }
     }
 
-    public void edit(Cliente cliente) throws IllegalOrphanException, NonexistentEntityException, Exception {
+    public void edit(Cliente cliente) throws NonexistentEntityException, Exception {
         EntityManager em = null;
         try {
             em = getEntityManager();
             em.getTransaction().begin();
-            Cliente persistentCliente = em.find(Cliente.class, cliente.getNitCliente());
-            Collection<Factura> facturaCollectionOld = persistentCliente.getFacturaCollection();
-            Collection<Factura> facturaCollectionNew = cliente.getFacturaCollection();
-            List<String> illegalOrphanMessages = null;
-            for (Factura facturaCollectionOldFactura : facturaCollectionOld) {
-                if (!facturaCollectionNew.contains(facturaCollectionOldFactura)) {
-                    if (illegalOrphanMessages == null) {
-                        illegalOrphanMessages = new ArrayList<String>();
-                    }
-                    illegalOrphanMessages.add("You must retain Factura " + facturaCollectionOldFactura + " since its nitCliente field is not nullable.");
-                }
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
-            }
-            Collection<Factura> attachedFacturaCollectionNew = new ArrayList<Factura>();
-            for (Factura facturaCollectionNewFacturaToAttach : facturaCollectionNew) {
-                facturaCollectionNewFacturaToAttach = em.getReference(facturaCollectionNewFacturaToAttach.getClass(), facturaCollectionNewFacturaToAttach.getIdFactura());
-                attachedFacturaCollectionNew.add(facturaCollectionNewFacturaToAttach);
-            }
-            facturaCollectionNew = attachedFacturaCollectionNew;
-            cliente.setFacturaCollection(facturaCollectionNew);
             cliente = em.merge(cliente);
-            for (Factura facturaCollectionNewFactura : facturaCollectionNew) {
-                if (!facturaCollectionOld.contains(facturaCollectionNewFactura)) {
-                    Cliente oldNitClienteOfFacturaCollectionNewFactura = facturaCollectionNewFactura.getNitCliente();
-                    facturaCollectionNewFactura.setNitCliente(cliente);
-                    facturaCollectionNewFactura = em.merge(facturaCollectionNewFactura);
-                    if (oldNitClienteOfFacturaCollectionNewFactura != null && !oldNitClienteOfFacturaCollectionNewFactura.equals(cliente)) {
-                        oldNitClienteOfFacturaCollectionNewFactura.getFacturaCollection().remove(facturaCollectionNewFactura);
-                        oldNitClienteOfFacturaCollectionNewFactura = em.merge(oldNitClienteOfFacturaCollectionNewFactura);
-                    }
-                }
-            }
             em.getTransaction().commit();
         } catch (Exception ex) {
             String msg = ex.getLocalizedMessage();
@@ -129,7 +74,7 @@ public class ClienteJpaController implements Serializable {
         }
     }
 
-    public void destroy(String id) throws IllegalOrphanException, NonexistentEntityException {
+    public void destroy(String id) throws NonexistentEntityException {
         EntityManager em = null;
         try {
             em = getEntityManager();
@@ -140,17 +85,6 @@ public class ClienteJpaController implements Serializable {
                 cliente.getNitCliente();
             } catch (EntityNotFoundException enfe) {
                 throw new NonexistentEntityException("The cliente with id " + id + " no longer exists.", enfe);
-            }
-            List<String> illegalOrphanMessages = null;
-            Collection<Factura> facturaCollectionOrphanCheck = cliente.getFacturaCollection();
-            for (Factura facturaCollectionOrphanCheckFactura : facturaCollectionOrphanCheck) {
-                if (illegalOrphanMessages == null) {
-                    illegalOrphanMessages = new ArrayList<String>();
-                }
-                illegalOrphanMessages.add("This Cliente (" + cliente + ") cannot be destroyed since the Factura " + facturaCollectionOrphanCheckFactura + " in its facturaCollection field has a non-nullable nitCliente field.");
-            }
-            if (illegalOrphanMessages != null) {
-                throw new IllegalOrphanException(illegalOrphanMessages);
             }
             em.remove(cliente);
             em.getTransaction().commit();

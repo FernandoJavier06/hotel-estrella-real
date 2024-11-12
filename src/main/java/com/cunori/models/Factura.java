@@ -6,8 +6,10 @@ package com.cunori.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 import java.util.Date;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,12 +34,20 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Factura.findAll", query = "SELECT f FROM Factura f"),
     @NamedQuery(name = "Factura.findByIdFactura", query = "SELECT f FROM Factura f WHERE f.idFactura = :idFactura"),
     @NamedQuery(name = "Factura.findByUuid", query = "SELECT f FROM Factura f WHERE f.uuid = :uuid"),
+    @NamedQuery(name = "Factura.findByFechaCreacion", query = "SELECT f FROM Factura f WHERE f.fechaCreacion = :fechaCreacion"),
     @NamedQuery(name = "Factura.findByFechaEmision", query = "SELECT f FROM Factura f WHERE f.fechaEmision = :fechaEmision"),
     @NamedQuery(name = "Factura.findByFechaCertificacion", query = "SELECT f FROM Factura f WHERE f.fechaCertificacion = :fechaCertificacion"),
     @NamedQuery(name = "Factura.findByIva", query = "SELECT f FROM Factura f WHERE f.iva = :iva"),
     @NamedQuery(name = "Factura.findByInguat", query = "SELECT f FROM Factura f WHERE f.inguat = :inguat"),
     @NamedQuery(name = "Factura.findByTotal", query = "SELECT f FROM Factura f WHERE f.total = :total")})
 public class Factura implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFactura")
+    private Collection<Reservacion> reservacionCollection;
+
+    @JoinColumn(name = "NIT_CLIENTE", referencedColumnName = "NIT_CLIENTE")
+    @ManyToOne(optional = false)
+    private Cliente nitCliente;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -46,6 +57,9 @@ public class Factura implements Serializable {
     private Integer idFactura;
     @Column(name = "UUID")
     private String uuid;
+    @Column(name = "FECHA_CREACION", insertable = false, updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date fechaCreacion;
     @Column(name = "FECHA_EMISION")
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaEmision;
@@ -62,9 +76,6 @@ public class Factura implements Serializable {
     @Basic(optional = false)
     @Column(name = "TOTAL")
     private BigDecimal total;
-    @JoinColumn(name = "NIT_CLIENTE", referencedColumnName = "NIT_CLIENTE")
-    @ManyToOne(optional = false)
-    private Cliente nitCliente;
 
     public Factura() {
     }
@@ -94,6 +105,14 @@ public class Factura implements Serializable {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    public Date getFechaCreacion() {
+        return fechaCreacion;
+    }
+
+    public void setFechaCreacion(Date fechaCreacion) {
+        this.fechaCreacion = fechaCreacion;
     }
 
     public Date getFechaEmision() {
@@ -136,14 +155,6 @@ public class Factura implements Serializable {
         this.total = total;
     }
 
-    public Cliente getNitCliente() {
-        return nitCliente;
-    }
-
-    public void setNitCliente(Cliente nitCliente) {
-        this.nitCliente = nitCliente;
-    }
-
     @Override
     public int hashCode() {
         int hash = 0;
@@ -167,6 +178,22 @@ public class Factura implements Serializable {
     @Override
     public String toString() {
         return "com.cunori.models.Factura[ idFactura=" + idFactura + " ]";
+    }
+
+    public Cliente getNitCliente() {
+        return nitCliente;
+    }
+
+    public void setNitCliente(Cliente nitCliente) {
+        this.nitCliente = nitCliente;
+    }
+
+    public Collection<Reservacion> getReservacionCollection() {
+        return reservacionCollection;
+    }
+
+    public void setReservacionCollection(Collection<Reservacion> reservacionCollection) {
+        this.reservacionCollection = reservacionCollection;
     }
     
 }

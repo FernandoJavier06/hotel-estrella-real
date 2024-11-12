@@ -4,9 +4,12 @@
  */
 package com.cunori.views;
 
+import com.cunori.controllers.FacturaJpaController;
 import com.cunori.controllers.HabitacionJpaController;
 import com.cunori.controllers.ReservacionJpaController;
 import com.cunori.controllers.TipoHabitacionJpaController;
+import com.cunori.models.Cliente;
+import com.cunori.models.Factura;
 import com.cunori.models.Habitacion;
 import com.cunori.models.HabitacionDisponibleDTO;
 import com.cunori.models.Reservacion;
@@ -53,6 +56,8 @@ public class PanelReservaciones extends javax.swing.JPanel {
 
     private ReservacionJpaController reservacionJpaController;
 
+    private FacturaJpaController facturaJpaController;
+
     private DefaultTableModel modelTbHabitacionesDisponibles;
     private DefaultTableModel modelReservacionesAgregadas;
 
@@ -63,13 +68,16 @@ public class PanelReservaciones extends javax.swing.JPanel {
     private SimpleDateFormat formatoFechaDMA;
     private SimpleDateFormat formatoFechaAMD;
     private BigDecimal total = new BigDecimal("0");
+    private BigDecimal iva = new BigDecimal("0");
+    private BigDecimal inguat = new BigDecimal("0");
+    private BigDecimal montoGravable = new BigDecimal("0");
 
     public PanelReservaciones() {
         initComponents();
 
         colorEnteredMenu = new Color(0, 87, 95);
         colorExitedMenu = new Color(0, 109, 119);
-        
+
         guiConfirmacionClientes = new GuiConfirmacionClientes();
         guiConfirmacionClientes.setPanelReservaciones(this);
 
@@ -87,6 +95,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
             tipoHabitacionJpaController = new TipoHabitacionJpaController(emf);
             habitacionJpaController = new HabitacionJpaController(emf);
             reservacionJpaController = new ReservacionJpaController(emf);
+            facturaJpaController = new FacturaJpaController(emf);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -123,9 +132,10 @@ public class PanelReservaciones extends javax.swing.JPanel {
         jSeparator9 = new javax.swing.JSeparator();
         jLabel15 = new javax.swing.JLabel();
         lbBorrarReservacion = new javax.swing.JLabel();
-        jLabel21 = new javax.swing.JLabel();
+        jLabel22 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(255, 255, 255));
+        setPreferredSize(new java.awt.Dimension(1260, 1000));
         setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         pNuevaReservacion.setBackground(new java.awt.Color(237, 246, 249));
@@ -312,9 +322,9 @@ public class PanelReservaciones extends javax.swing.JPanel {
 
         add(pNuevaReservacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 60, 1220, 570));
 
-        jLabel21.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
-        jLabel21.setText("Nueva Reservación");
-        add(jLabel21, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
+        jLabel22.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+        jLabel22.setText("Nueva Reservación");
+        add(jLabel22, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 20, -1, -1));
     }// </editor-fold>//GEN-END:initComponents
 
     private void initPanelReservaciones() {
@@ -398,7 +408,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 for (int i = 0; i < modelReservacionesAgregadas.getRowCount(); i++) {
                     Date fechaRegistro1 = obtenerFechaNormalizada(formatoFechaDMA.parse((String) tbReservacionesAgregadas.getValueAt(i, 5)));
                     Date fechaSalida1 = obtenerFechaNormalizada(formatoFechaDMA.parse((String) tbReservacionesAgregadas.getValueAt(i, 6)));
-                    
+
                     if (fechaSalida1.after(fechaRegistro) && fechaRegistro1.before(fechaSalida)) {
                         habitaciones.remove(habitacionJpaController.findHabitacion((Short) tbReservacionesAgregadas.getValueAt(i, 0)));
                     }
@@ -439,12 +449,12 @@ public class PanelReservaciones extends javax.swing.JPanel {
                 camasExtrasString = "0";
             }
             camasExtrasInteger = Integer.valueOf(camasExtrasString.trim());
-            
-            if (camasExtrasInteger > 2) {
+
+            if (camasExtrasInteger > 2 || camasExtrasInteger < 0) {
                 JOptionPane.showMessageDialog(null, "Solo se pueden registrar 2 camas extras como máximo.", "Advertencia de entrada", JOptionPane.INFORMATION_MESSAGE);
                 return;
             }
-            
+
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Cantidad de camas no valida", "Error de entrada", JOptionPane.ERROR_MESSAGE);
             return;
@@ -466,7 +476,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
             camasExtrasInteger, formatoFechaDMA.format(fechaRegistro), formatoFechaDMA.format(fechaSalida),
             subtotal
         };
-        total = total.add(subtotal);
+        total = total.add(subtotal).setScale(2, RoundingMode.HALF_UP);
         txtTotal.setText("Q " + total);
         modelReservacionesAgregadas.addRow(habitacionAgregada);
         modelTbHabitacionesDisponibles.removeRow(tbHabitacionesDisponibles.getSelectedRow());
@@ -490,13 +500,65 @@ public class PanelReservaciones extends javax.swing.JPanel {
             JOptionPane.showMessageDialog(null, "No hay reservaciones agregadas.", "Error de confirmación.", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        if (JOptionPane.showConfirmDialog(null, "¿Desea confirmar la reservación?", "Confirmación de reservación", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
+
+        if (JOptionPane.showConfirmDialog(null, "¿Desea confirmar la reservación?", "Confirmación de reservación", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE) == JOptionPane.YES_OPTION) {
             guiConfirmacionClientes.setVisible(true);
             gui.setEnabled(false);
         }
-        
+
     }//GEN-LAST:event_lbGuardarCambios2MousePressed
+
+    public void clienteSeleccionado(Cliente c) {
+        Factura factura = new Factura();
+        montoGravable = total.divide(BigDecimal.valueOf(1.22), 2, RoundingMode.HALF_UP);
+        iva = montoGravable.multiply(BigDecimal.valueOf(0.12));
+        iva = iva.setScale(2, RoundingMode.HALF_UP);
+        inguat = montoGravable.multiply(BigDecimal.valueOf(0.10));
+        inguat = inguat.setScale(2, RoundingMode.HALF_UP);
+
+        factura.setIva(iva);
+        factura.setInguat(inguat);
+        factura.setTotal(total);
+        factura.setNitCliente(c);
+        facturaJpaController.create(factura);
+        for (int i = 0; i < tbReservacionesAgregadas.getRowCount(); i++) {
+            try {
+                Reservacion nuevaReservacion = new Reservacion();
+                Habitacion habitacion = habitacionJpaController.findHabitacion(
+                        (Short) tbReservacionesAgregadas.getValueAt(i, 0));
+                nuevaReservacion.setNumeroHabitacion(habitacion);
+                nuevaReservacion.setPrecioFinal(
+                        new BigDecimal(tbReservacionesAgregadas.getValueAt(i, 2).toString()));
+                nuevaReservacion.setCamasExtras(
+                        Short.valueOf(tbReservacionesAgregadas.getValueAt(i, 4).toString()));
+
+                nuevaReservacion.setCheckIn(obtenerFechaNormalizada(
+                        formatoFechaDMA.parse(tbReservacionesAgregadas.getValueAt(i, 5).toString())));
+                nuevaReservacion.setCheckOut(obtenerFechaNormalizada(
+                        formatoFechaDMA.parse(tbReservacionesAgregadas.getValueAt(i, 6).toString())));
+                nuevaReservacion.setIdFactura(factura);
+                reservacionJpaController.create(nuevaReservacion);
+                
+            } catch (ParseException ex) {
+                Logger.getLogger(PanelReservaciones.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+            limpiarPanelReservaciones();
+    }
+
+    private void limpiarPanelReservaciones(){
+        dcRegistro.setDate(null);
+        dcSalida.setDate(null);
+        cmbTipoHabitacion.setSelectedIndex(0);
+        modelTbHabitacionesDisponibles.setRowCount(0);
+        modelReservacionesAgregadas.setRowCount(0);
+        total = BigDecimal.ZERO;
+        montoGravable = BigDecimal.ZERO;
+        iva = BigDecimal.ZERO;
+        inguat = BigDecimal.ZERO;
+       txtTotal.setText("Q " + total.toString());
+    }
+    
     /**
      *
      * @param fecha
@@ -528,9 +590,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
         this.guiConfirmacionClientes = guiConfirmacionClientes;
     }
 
-    
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> cmbTipoHabitacion;
     private com.toedter.calendar.JDateChooser dcRegistro;
@@ -540,7 +600,7 @@ public class PanelReservaciones extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel21;
+    private javax.swing.JLabel jLabel22;
     private javax.swing.JLabel jLabel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;

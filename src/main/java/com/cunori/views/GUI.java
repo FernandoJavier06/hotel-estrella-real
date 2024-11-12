@@ -15,6 +15,7 @@ import javax.persistence.Persistence;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.ScrollPaneConstants;
 
 /**
  *
@@ -23,47 +24,50 @@ import javax.swing.JScrollPane;
 public class Gui extends javax.swing.JFrame {
 
     private GuiLogin guiLogin;
-    
-    private Color colorEnteredMenu; 
+
+    private Color colorEnteredMenu;
     private Color colorExitedMenu;
-    
+
     private EntityManagerFactory emf;
-    
+
     private Usuario usuario;
-    
+
     TipoHabitacionJpaController tipoHabitacionEntityManager;
     private List<TipoHabitacion> tiposHabitacion;
-    
+
     private PanelPerfil panelPerfil;
     private PanelReservaciones panelReservaciones;
-    
+    private PanelFacturas panelFacturas;
+    private JScrollPane jScrollPane;
+
     public Gui() {
         initComponents();
         this.setSize(1500, 800);
         this.setLocationRelativeTo(null);
         
-        colorEnteredMenu = new Color(0,87,95);
-        colorExitedMenu = new Color(0,109,119);
+        colorEnteredMenu = new Color(0, 87, 95);
+        colorExitedMenu = new Color(0, 109, 119);
         
-        JScrollPane jScrollPane = new JScrollPane(pBody);
+        panelPerfil = new PanelPerfil();
+        pBody.add(panelPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0));
+        panelReservaciones = new PanelReservaciones();
+        pBody.add(panelReservaciones, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0));
+        panelFacturas = new PanelFacturas();
+        pBody.add(panelFacturas, new org.netbeans.lib.awtextra.AbsoluteConstraints(0,0));
+        panelReservaciones.setGui(this);
+
+        jScrollPane = new JScrollPane(pBody);
         jScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         jScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         this.add(jScrollPane);
-        
-        panelPerfil = new PanelPerfil();
-        pBody.add(panelPerfil,new org.netbeans.lib.awtextra.AbsoluteConstraints(0,0));
-        panelReservaciones = new PanelReservaciones();
-        pBody.add(panelReservaciones,new org.netbeans.lib.awtextra.AbsoluteConstraints(0,0));
-        panelReservaciones.setGui(this);
-        
+
         try {
             emf = Persistence.createEntityManagerFactory("com.cunori.hotel.estrella.real_hotel-estrella-real_jar_1.0-SNAPSHOTPU");
             tipoHabitacionEntityManager = new TipoHabitacionJpaController(emf);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
-        
-        
+
         ocultarPaneles();
         panelPerfil.setVisible(true);
     }
@@ -85,12 +89,9 @@ public class Gui extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        lbFacturacion = new javax.swing.JLabel();
         pBody = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu3 = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
 
@@ -120,7 +121,7 @@ public class Gui extends javax.swing.JFrame {
                 lbUsuariosMousePressed(evt);
             }
         });
-        pMenu.add(lbUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 430, 200, 58));
+        pMenu.add(lbUsuarios, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 510, 200, 58));
 
         lbHabitaciones.setBackground(new java.awt.Color(0, 109, 119));
         lbHabitaciones.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
@@ -195,6 +196,26 @@ public class Gui extends javax.swing.JFrame {
         jLabel2.setText("Hotel Estrella");
         pMenu.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 200, 40));
 
+        lbFacturacion.setBackground(new java.awt.Color(0, 109, 119));
+        lbFacturacion.setFont(new java.awt.Font("Roboto Medium", 0, 24)); // NOI18N
+        lbFacturacion.setForeground(new java.awt.Color(255, 255, 255));
+        lbFacturacion.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lbFacturacion.setText("Facuración");
+        lbFacturacion.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lbFacturacion.setOpaque(true);
+        lbFacturacion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                lbFacturacionMouseEntered(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                lbFacturacionMouseExited(evt);
+            }
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                lbFacturacionMousePressed(evt);
+            }
+        });
+        pMenu.add(lbFacturacion, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 430, 200, 58));
+
         getContentPane().add(pMenu, java.awt.BorderLayout.LINE_START);
 
         pBody.setBackground(new java.awt.Color(255, 255, 255));
@@ -205,23 +226,6 @@ public class Gui extends javax.swing.JFrame {
 
         jMenuBar1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jMenuBar1.setOpaque(true);
-
-        jMenu2.setText("Administrar");
-        jMenu2.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jMenu2.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jMenuBar1.add(jMenu2);
-
-        jMenu1.setText("Reportes");
-        jMenu1.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
-        jMenu1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-
-        jMenuItem1.setText("jMenuItem1");
-        jMenu1.add(jMenuItem1);
-
-        jMenuItem2.setText("jMenuItem2");
-        jMenu1.add(jMenuItem2);
-
-        jMenuBar1.add(jMenu1);
 
         jMenu3.setText("Cuenta");
         jMenu3.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -236,13 +240,14 @@ public class Gui extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void ocultarPaneles(){
+    private void ocultarPaneles() {
         panelPerfil.setVisible(false);
         panelReservaciones.setVisible(false);
+        panelFacturas.setVisible(false);
     }
-    
-    private void initPanelPerfil(){
-        
+
+    private void initPanelPerfil() {
+
     }
 
     public GuiLogin getGuiLogin() {
@@ -260,20 +265,20 @@ public class Gui extends javax.swing.JFrame {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
-    
-    
-    public void tipoRol(){
+
+    public void tipoRol() {
         if (usuario.getRol().equalsIgnoreCase("Administrador")) {
             lbUsuarios.setVisible(true);
-        }else
+        } else {
             lbUsuarios.setVisible(false);
+        }
     }
-    
-    public void mandarDatosPerfil(){
+
+    public void mandarDatosPerfil() {
         panelPerfil.setUsuario(usuario);
         panelPerfil.datosPerfil();
     }
-    
+
     private void lbPerfilMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbPerfilMouseEntered
         lbPerfil.setBackground(colorEnteredMenu);
     }//GEN-LAST:event_lbPerfilMouseEntered
@@ -324,6 +329,19 @@ public class Gui extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_lbUsuariosMousePressed
 
+    private void lbFacturacionMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbFacturacionMouseEntered
+        lbFacturacion.setBackground(colorEnteredMenu);
+    }//GEN-LAST:event_lbFacturacionMouseEntered
+
+    private void lbFacturacionMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbFacturacionMouseExited
+        lbFacturacion.setBackground(colorExitedMenu);
+    }//GEN-LAST:event_lbFacturacionMouseExited
+
+    private void lbFacturacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbFacturacionMousePressed
+        ocultarPaneles();
+        panelFacturas.setVisible(true);
+    }//GEN-LAST:event_lbFacturacionMousePressed
+
     /**
      * @param args the command line arguments
      */
@@ -363,14 +381,11 @@ public class Gui extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JLabel lbFacturacion;
     private javax.swing.JLabel lbHabitaciones;
     private javax.swing.JLabel lbPerfil;
     private javax.swing.JLabel lbReservaciones;

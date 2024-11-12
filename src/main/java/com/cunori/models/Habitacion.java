@@ -5,7 +5,9 @@
 package com.cunori.models;
 
 import java.io.Serializable;
+import java.util.Collection;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 /**
@@ -25,6 +28,9 @@ import javax.persistence.Table;
     @NamedQuery(name = "Habitacion.findAll", query = "SELECT h FROM Habitacion h"),
     @NamedQuery(name = "Habitacion.findByNumeroHabitacion", query = "SELECT h FROM Habitacion h WHERE h.numeroHabitacion = :numeroHabitacion")})
 public class Habitacion implements Serializable {
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "numeroHabitacion")
+    private Collection<Reservacion> reservacionCollection;
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -81,6 +87,14 @@ public class Habitacion implements Serializable {
     @Override
     public String toString() {
         return "Habitacion{" + "numeroHabitacion=" + numeroHabitacion + ", idTipoHabitacion=" + idTipoHabitacion + '}';
+    }
+
+    public Collection<Reservacion> getReservacionCollection() {
+        return reservacionCollection;
+    }
+
+    public void setReservacionCollection(Collection<Reservacion> reservacionCollection) {
+        this.reservacionCollection = reservacionCollection;
     }
 
     

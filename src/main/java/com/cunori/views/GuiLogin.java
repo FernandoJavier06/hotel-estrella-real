@@ -252,7 +252,7 @@ public class GuiLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_txtContraseniaFocusGained
 
     private void lbLoginMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbLoginMouseClicked
-        usuario.setNitUsuario("112233445");
+        /*usuario.setNitUsuario("112233445");
         usuario.setNombre("Juan");
         usuario.setApellidos("López Morales");
         usuario.setTelefono("53785699");
@@ -265,7 +265,7 @@ public class GuiLogin extends javax.swing.JFrame {
             usuarioJpaController.create(usuario);
         } catch (Exception ex) {
             Logger.getLogger(GuiLogin.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }*/
     }//GEN-LAST:event_lbLoginMouseClicked
 
     private void lbBuscarHabitacionReservacionMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lbBuscarHabitacionReservacionMousePressed
